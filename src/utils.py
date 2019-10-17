@@ -86,7 +86,7 @@ def cross_validate(model, x, y, k, random_state):
     return metrics
 
 
-def load(dataset):
+def load_data(dataset):
     """Load a dataset.
 
     :param dataset: str
@@ -105,6 +105,61 @@ def load(dataset):
 
     x, y = data.iloc[:, :-1].values, data.iloc[:, -1].values
 
+    return x, y
+
+
+def load_network(network_path):
+    """Load the networks parameters.
+
+    :param network_path: str
+        Relative/absolute path to file.
+
+    :return: tuple
+        lambda, number of inputs, number of neurons for each layer (list), number of outputs
+    """
+    with open(network_path, 'r') as file:
+        values = [float(line) for line in file]
+
+    lbd = values[0]
+    n_inputs = values[1]
+    layers = values[2:-1]
+    n_outputs = values[-1]
+
+    return lbd, n_inputs, layers, n_outputs
+
+
+def load_weights(weights_path):
+    """Load the network's weights.
+
+    :param weights_path: str
+        Relative/absolute path to file.
+
+    :return: list
+        List of np.array objects, one for each layer.
+    """
+    with open(weights_path, 'r') as file:
+        weights = [np.array(np.mat(line)) for line in file]
+
+    return weights
+
+
+def load_benchmark(dataset_path):
+    """Load the network's weights.
+
+    :param dataset_path: str
+        Relative/absolute path to file.
+
+    :return: tuple
+        x, y
+    """
+    x, y = [], []
+    with open(dataset_path, 'r') as file:
+        for line in file:
+            content = line.split(';')
+            x += [[float(i) for i in content[0].split(',')]]
+            y += [float(i) for i in content[1].split(',')]
+
+    x = np.array(x)
     return x, y
 
 
