@@ -32,8 +32,16 @@ class NeuralNetwork(Model):
     def n_layers(self):
         return len(self.__w)
 
-    def fit(self, x, y) -> None:
-        pass
+    def fit(self, x, y, batch_size) -> None:
+        n = x.shape[0]
+        b = n // batch_size
+
+        for i in range(b):
+            j = i * batch_size
+            k = slice(j, j + batch_size)
+            self.backward_propagation(x[k, :], y[k])
+
+        self.backward_propagation(x[b * batch_size:, :], y[b * batch_size:])
 
     def predict(self, x) -> list:
         predictions = [self.forward_propagation(x[i]) for i in range(len(x))]

@@ -1,6 +1,6 @@
 class Model:
 
-    def fit(self, x, y) -> None:
+    def fit(self, x, y, batch_size) -> None:
         """Fit the model.
 
         :param x: matrix (numpy.ndarray)
@@ -8,6 +8,9 @@ class Model:
 
         :param y: list
             Labels for training data.
+
+        :param batch_size: int
+            Size of the batch for mini-batch training.
         """
         raise NotImplementedError
 
