@@ -5,7 +5,7 @@ import numpy as np
 
 class NeuralNetwork(Model):
 
-    def __init__(self, w, r):
+    def __init__(self, w, r, alpha):
         """Initialize the network's parameters.
 
         a: list
@@ -16,11 +16,17 @@ class NeuralNetwork(Model):
 
         :param r: float
             Regularization parameter.
+
+        :param alpha: float
+            Learning rate.
         """
-        self.__a = [np.array([]) for _ in range(len(w) + 1)]
-        self.__z = [np.array([]) for _ in range(len(w) + 1)]
-        self.__w = w
-        self.__r = r
+        self.__alpha = alpha
+        self.__w = w                                                    # weights
+        self.__r = r                                                    # lambda in regularization
+        self.__a = [np.array([]) for _ in range(self.n_layers + 1)]     # activation values
+        self.__z = [np.array([]) for _ in range(self.n_layers + 1)]     # values before g()
+        self.__d = [np.array([]) for _ in range(self.n_layers + 1)]     # deltas
+        self.__g = []                                                   # gradients
 
     @property
     def n_layers(self):
@@ -30,10 +36,10 @@ class NeuralNetwork(Model):
         pass
 
     def predict(self, x) -> list:
-        predictions = [self.forward(x[i]) for i in range(len(x))]
+        predictions = [self.forward_propagation(x[i]) for i in range(len(x))]
         return predictions
 
-    def forward(self, x):
+    def forward_propagation(self, x):
         """Forward propagation.
 
         :param x: np.array
@@ -65,7 +71,7 @@ class NeuralNetwork(Model):
         n = x.shape[0]
 
         for i in range(n):
-            f = self.forward(x[i])
+            f = self.forward_propagation(x[i])
             cost = np.multiply(-y[i], np.log2(f)) - np.multiply(1 - y[i], np.log2(1 - f))
             j = j + np.sum(cost)
 
@@ -95,3 +101,34 @@ class NeuralNetwork(Model):
         :return: np.array
         """
         return np.array(map(lambda x: 1.0 / (1.0 + exp(-x)), z))
+
+    def backward_propagation(self, x, y):
+        """Backpropagation.
+
+        :param x: np.array
+            Instances.
+
+        :param y: np.array
+            Instances' classes.
+        """
+        n = x.shape[0]
+        last_layer = self.n_layers - 1
+        self.__g = [np.zeros((self.__w[i].shape[0], 1)) for i in range(self.n_layers + 1)]
+
+        for i in range(n):
+            pred = self.forward_propagation(x[i, :])
+            self.__d[last_layer] = pred - y[i]
+
+            for k in range(last_layer - 1, 1, -1):
+                deltas = np.matmul(self.__w[k].T, self.__d[k + 1])
+                deltas = np.multiply(deltas, self.__a[k])
+                deltas = np.multiply(deltas, 1 - self.__a[k])
+                self.__d[k] = deltas[1:]
+
+            for k in range(last_layer - 1, 0, -1):
+                self.__g[k] = self.__g[k] + np.matmul(self.__d[k], self.__a[k].T)
+
+                p = np.multiply(self.__w[k][:, 1:], self.__r)
+                self.__g[k] = np.multiply(1 / n, self.__g[k][1:] + p)
+
+                self.__w[k] = self.__w[k] - np.multiply(self.__alpha, self.__g[k])
