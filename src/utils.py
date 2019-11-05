@@ -6,7 +6,7 @@ import numpy as np
 import json
 
 
-datasets = ['breast_cancer', 'ionosphere', 'pima', 'wine']
+datasets = ['breast-cancer', 'ionosphere', 'pima', 'wine']
 
 
 def stratified_split(y, n_splits, random_state):
