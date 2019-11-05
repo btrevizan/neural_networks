@@ -5,8 +5,9 @@ from os import path
 import numpy as np
 import json
 
-
+results_path = 'tests/results/{}/'
 datasets = ['breast-cancer', 'ionosphere', 'pima', 'wine']
+k_fold = 10
 
 
 def stratified_split(y, n_splits, random_state):
@@ -46,7 +47,7 @@ def stratified_split(y, n_splits, random_state):
         yield train, test
 
 
-def cross_validate(model, x, y, k, random_state):
+def cross_validate(model, x, y, k, batch_size, random_state):
     """Run a k-fold cross validation.
 
     :param model: object
@@ -60,6 +61,9 @@ def cross_validate(model, x, y, k, random_state):
 
     :param k: int
         Number of folds.
+
+    :param batch_size: int
+        Size of batch for mini-batch training.
 
     :param random_state: instance of numpy.random.RandomState
         Seed for random generator.
@@ -77,13 +81,77 @@ def cross_validate(model, x, y, k, random_state):
         x_test = x[test_i, :]
         y_test = y[test_i]
 
-        model.fit(x_train, y_train)
+        model.fit(x_train, y_train, batch_size)
         y_pred = model.predict(x_test)
 
         scorer = Scorer(y_test, y_pred, n_labels)
         metrics.append(scorer.f1_score())
 
     return metrics
+
+
+def evaluate_cost(model, x, y, k, batch_size, random_state):
+    """Run a mini-batch training and collect the cost of each batch.
+
+    :param model: object
+        Object with a fit(x, y) and predict([x]) function.
+
+    :param x: matrix
+        Instance's attributes.
+
+    :param y: list
+        Instance's classes.
+
+    :param k: int
+        Number of folds.
+
+    :param batch_size: int
+        Size of batch for mini-batch training.
+
+    :param random_state: instance of numpy.random.RandomState
+        Seed for random generator.
+
+    :return: list
+        Cost for each fold.
+    """
+    costs = {}
+
+    for train_i, test_i in stratified_split(y, k, random_state):
+        x_train = x[train_i, :]
+        y_train = y[train_i]
+
+        x_test = x[test_i, :]
+        y_test = y[test_i]
+
+        n = x_train.shape[0]
+        b = np.ceil(n / batch_size)
+
+        for i in range(int(b)):
+            j = i * batch_size
+            k = slice(j, j + batch_size)
+
+            model.backward_propagation(x_train[k, :], y_train[k])
+
+            bs = (j + batch_size) - j
+            cost = model.cost(x_test[k, :], y_test[k])
+
+            print("Cost = {}".format(cost))
+
+            costs.setdefault(bs, [])
+            costs[bs].append(cost)
+
+        bs = n - b * batch_size
+        if bs > 0:
+            model.backward_propagation(x_train[b * batch_size:, :], y_train[b * batch_size:])
+
+            cost = model.cost(x_test[b * batch_size:, :], y_test[b * batch_size:])
+
+            print("Cost = {}".format(cost))
+
+            costs.setdefault(bs, [])
+            costs[bs].append(cost)
+
+    return costs
 
 
 def load_data(dataset):
@@ -162,6 +230,21 @@ def load_benchmark(dataset_path):
     x = np.array(x)
     return x, y
 
+
+def weights(n, random_state):
+    """Create a random matrix of weights.
+
+    :param n: int
+        Number of neurons.
+
+    :param random_state: instance of numpy.random.RandomState
+        Seed for random generator.
+
+    :return: np.array
+    """
+    w = random_state.normal(0, 1, (n + 1, 1))
+    w[0, 0] = 1  # bias
+    return w
 
 def __unique_counts(values):
     _, counts = np.unique(values, return_counts=True)
