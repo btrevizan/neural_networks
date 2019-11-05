@@ -124,19 +124,26 @@ class NeuralNetwork(Model):
         self.__g = [np.zeros((self.__w[i].shape[0], 1)) for i in range(self.n_layers + 1)]
 
         for i in range(n):
+            # Deltas for output neurons
             pred = self.forward_propagation(x[i, :])
             self.__d[last_layer] = pred - y[i]
 
-            for k in range(last_layer - 1, 1, -1):
+            # Deltas for hidden layers
+            for k in range(last_layer - 1, 0, -1):
                 deltas = np.matmul(self.__w[k].T, self.__d[k + 1])
                 deltas = np.multiply(deltas, self.__a[k])
                 deltas = np.multiply(deltas, 1 - self.__a[k])
                 self.__d[k] = deltas[1:]
 
-            for k in range(last_layer - 1, 0, -1):
+            # Accumulate gradients
+            for k in range(last_layer - 1, -1, -1):
                 self.__g[k] = self.__g[k] + np.matmul(self.__d[k], self.__a[k].T)
 
-                p = np.multiply(self.__w[k][:, 1:], self.__r)
-                self.__g[k] = np.multiply(1 / n, self.__g[k][1:] + p)
+        # Final gradients
+        for k in range(last_layer - 1, -1, -1):
+            p = np.multiply(self.__w[k][:, 1:], self.__r)  # regularization
+            self.__g[k] = np.multiply(1 / n, self.__g[k][1:] + p)
 
-                self.__w[k] = self.__w[k] - np.multiply(self.__alpha, self.__g[k])
+        # Update weights
+        for k in range(last_layer - 1, -1, -1):
+            self.__w[k] = self.__w[k] - np.multiply(self.__alpha, self.__g[k])
