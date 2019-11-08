@@ -4,9 +4,9 @@ import sys
 network, initial_weights, dataset = sys.argv[1:]
 
 with open(network, 'r') as netfile:
-		lines = netfile.readlines()
-		regularization = float(lines[0])
-		number_of_neurons = [int(i) for i in lines[1:]]  # number of neurons on each layer.
+	lines = netfile.readlines()
+	regularization = float(lines[0])
+	number_of_neurons = [int(i) for i in lines[1:]]  # number of neurons on each layer.
 
 all_layers_weights = []
 
