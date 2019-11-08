@@ -173,6 +173,9 @@ def load_data(dataset):
 
     x, y = data.iloc[:, :-1].values, data.iloc[:, -1].values
 
+    x = np.asmatrix(x)
+    y = np.asmatrix(y)
+
     return x, y
 
 
@@ -206,9 +209,9 @@ def load_weights(weights_path):
         List of np.array objects, one for each layer.
     """
     with open(weights_path, 'r') as file:
-        weights = [np.array(np.mat(line)) for line in file]
+        w = [np.array(np.mat(line)) for line in file]
 
-    return weights
+    return w
 
 
 def load_benchmark(dataset_path):
@@ -225,9 +228,11 @@ def load_benchmark(dataset_path):
         for line in file:
             content = line.split(';')
             x += [[float(i) for i in content[0].split(',')]]
-            y += [float(i) for i in content[1].split(',')]
+            y += [[float(i) for i in content[1].split(',')]]
 
-    x = np.array(x)
+    x = np.asmatrix(np.array(x))
+    y = np.asmatrix(np.array(y))
+
     return x, y
 
 
@@ -245,6 +250,7 @@ def weights(n, random_state):
     w = random_state.normal(0, 1, (n + 1, 1))
     w[0, 0] = 1  # bias
     return w
+
 
 def __unique_counts(values):
     _, counts = np.unique(values, return_counts=True)

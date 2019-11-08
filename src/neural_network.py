@@ -20,17 +20,21 @@ class NeuralNetwork(Model):
         :param alpha: float
             Learning rate.
         """
-        self.__alpha = alpha
-        self.__w = w                                                    # weights
-        self.__r = r                                                    # lambda in regularization
-        self.__a = [np.array([]) for _ in range(self.n_layers + 1)]     # activation values
-        self.__z = [np.array([]) for _ in range(self.n_layers + 1)]     # values before g()
-        self.__d = [np.array([]) for _ in range(self.n_layers + 1)]     # deltas
-        self.__g = []                                                   # gradients
+        self.alpha = alpha
+        self.w = w                                                    # weights
+        self.r = r                                                    # lambda in regularization
+        self.a = [np.mat([]) for _ in range(self.n_layers + 1)]       # activation values
+        self.z = [np.mat([]) for _ in range(self.n_layers + 1)]       # values before g()
+        self.d = [np.mat([]) for _ in range(self.n_layers)]           # deltas
+        self.g = []                                                   # gradients
 
     @property
     def n_layers(self):
-        return len(self.__w)
+        return len(self.w)
+
+    @property
+    def last_layer(self):
+        return self.n_layers - 1
 
     def fit(self, x, y, batch_size) -> None:
         n = x.shape[0]
@@ -57,13 +61,13 @@ class NeuralNetwork(Model):
         :return: list
             list of outputs
         """
-        self.__a[0] = np.append([1], x)  # input with bias
+        self.a[0] = np.asmatrix(np.append([1], x))  # input with bias
 
-        for l in range(1, self.n_layers):
-            self.__z[l] = np.matmul(self.__w[l - 1], self.__a[l - 1])
-            self.__a[l] = np.append([1], self.sigmoid(self.__z[l]))
+        for l in range(1, len(self.a)):
+            self.z[l] = np.matmul(self.w[l - 1], self.a[l - 1].T).T
+            self.a[l] = np.asmatrix(np.append([1], self.sigmoid(self.z[l].T)))
 
-        return self.__a[-1][1:]  # output without bias
+        return self.a[-1][:, 1:]  # output without bias
 
     def cost(self, x, y):
         """Compute the cost function for each x[i].
@@ -80,14 +84,28 @@ class NeuralNetwork(Model):
         n = x.shape[0]
 
         for i in range(n):
-            f = self.forward_propagation(x[i])
-            cost = np.multiply(-y[i], np.log2(f)) - np.multiply(1 - y[i], np.log2(1 - f))
-            j = j + np.sum(cost)
+            f = self.forward_propagation(x[i, :])
+            cost = self.cost_x(y[i, :], f)
+            j = j + cost
 
         j = j / n
         s = self.regularization(n)
 
         return j + s
+
+    def cost_x(self, y, f):
+        """Compute the cost function for a x[i].
+
+        :param y:
+            Expected output.
+
+        :param f:
+            Predicted output.
+
+        :return: float
+        """
+        c = np.multiply(-y, np.log2(f)) - np.multiply(1 - y, np.log2(1 - f))
+        return np.sum(c)
 
     def regularization(self, n):
         """Compute the regularization term.
@@ -97,9 +115,9 @@ class NeuralNetwork(Model):
 
         :return: float
         """
-        s = np.power(np.array(self.__w), 2)
-        s = np.sum(s)
-        s = (self.__r / (2 * n)) * s
+        s = [np.power(np.array(self.w[i][:, 1:]), 2) for i in range(self.n_layers)]
+        s = np.sum([np.sum(s[i]) for i in range(self.n_layers)])
+        s = (self.r / (2 * n)) * s
         return s
 
     @staticmethod
@@ -109,7 +127,7 @@ class NeuralNetwork(Model):
         :param z: np.array
         :return: np.array
         """
-        return np.array(map(lambda x: 1.0 / (1.0 + exp(-x)), z))
+        return np.array(list(map(lambda x: 1.0 / (1.0 + exp(-x)), z)))
 
     def backward_propagation(self, x, y):
         """Backpropagation.
@@ -121,30 +139,46 @@ class NeuralNetwork(Model):
             Instances' classes.
         """
         n = x.shape[0]
-        last_layer = self.n_layers - 1
-        self.__g = [np.zeros((self.__w[i].shape[0], 1)) for i in range(self.n_layers + 1)]
+        self.g = [np.zeros(self.w[i].shape) for i in range(self.n_layers)]
 
         for i in range(n):
             # Deltas for output neurons
             pred = self.forward_propagation(x[i, :])
-            self.__d[last_layer] = pred - y[i]
+            self.d[self.last_layer] = pred - y[i, :]
 
-            # Deltas for hidden layers
-            for k in range(last_layer - 1, 0, -1):
-                deltas = np.matmul(self.__w[k].T, self.__d[k + 1])
-                deltas = np.multiply(deltas, self.__a[k])
-                deltas = np.multiply(deltas, 1 - self.__a[k])
-                self.__d[k] = deltas[1:]
+            self.update_deltas(x[i, :])
+            self.accumulate_gradients()
 
-            # Accumulate gradients
-            for k in range(last_layer - 1, -1, -1):
-                self.__g[k] = self.__g[k] + np.matmul(self.__d[k], self.__a[k].T)
-
-        # Final gradients
-        for k in range(last_layer - 1, -1, -1):
-            p = np.multiply(self.__w[k][:, 1:], self.__r)  # regularization
-            self.__g[k] = np.multiply(1 / n, self.__g[k][1:] + p)
+        self.final_gradients(n)
 
         # Update weights
-        for k in range(last_layer - 1, -1, -1):
-            self.__w[k] = self.__w[k] - np.multiply(self.__alpha, self.__g[k])
+        for k in range(self.last_layer, -1, -1):
+            self.w[k] = self.w[k] - np.multiply(self.alpha, self.g[k])
+
+    def update_deltas(self, x):
+        """Update delta given a x[i].
+
+        :param x: np.array
+            Instance values.
+        """
+        # Deltas for hidden layers
+        for k in range(self.last_layer, 0, -1):
+            deltas = np.matmul(self.w[k].T, self.d[k])
+            deltas = np.multiply(deltas, self.a[k].T)
+            deltas = np.multiply(deltas, 1 - self.a[k].T)
+            self.d[k - 1] = deltas[1:, :].T
+
+    def accumulate_gradients(self):
+        """Just accumulate gradients for mini-batch training."""
+        for k in range(self.last_layer, -1, -1):
+            self.g[k] = self.g[k] + np.matmul(self.d[k].T, self.a[k])
+
+    def final_gradients(self, n):
+        """Calculate gradients with regularization.
+
+        :param n: int
+            Number of instances (x.shape[0]).
+        """
+        for k in range(self.last_layer, -1, -1):
+            p = np.multiply(self.w[k][:, 1:], self.r)  # regularization
+            self.g[k][:, 1:] = np.multiply(1 / n, self.g[k][:, 1:] + p)
