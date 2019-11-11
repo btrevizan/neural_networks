@@ -14,19 +14,21 @@ def optimize(args):
 
     batch_sizes = [5, 50, 100, 200, x.shape[0]]
     n_layers = [1, 2, 3, 5, 10, 25, 50, 100]
-    r_param = [0.01, 0.1, 0.5, 0.9, 0.99]
-    alphas = [0.01, 0.1, 0.5, 0.9, 0.99]
+    r_param = [0.01, 0.1, 0.5, 0.9]
+    alphas = [0.003, 0.01, 0.1, 0.2, 0.5]
+    betas = [0, 0.25, 0.50, 0.75, 0.99]
 
     default_weights = weights(5, rs)
     default_regularization = 0.5
-    default_alpha = 0.99
+    default_alpha = 0.1
+    default_beta = 0.5
     default_bs = 100
 
     print("Optimizing number of layers...")
     layer_metrics = {}
     for n in n_layers:
         w = [weights(n, rs) for _ in range(n)]
-        model = NeuralNetwork(w, default_regularization, default_alpha)
+        model = NeuralNetwork(w, default_regularization, default_alpha, default_beta)
         layer_metrics[n] = cross_validate(model, x, y, k_fold, default_bs, rs)
         print("\tNumber of layers = {} with {} mean F1-Score.".format(n, np.mean(layer_metrics[n])))
 
@@ -36,7 +38,7 @@ def optimize(args):
     print("Optimizing the regularization parameter...")
     r_metrics = {}
     for r in r_param:
-        model = NeuralNetwork(default_weights, r, default_alpha)
+        model = NeuralNetwork(default_weights, r, default_alpha, default_beta)
         r_metrics[r] = cross_validate(model, x, y, k_fold, default_bs, rs)
         print("\tR = {} with {} mean F1-Score.".format(r, np.mean(r_metrics[r])))
 
@@ -46,7 +48,7 @@ def optimize(args):
     alpha_metrics = {}
     print("Optimizing the learning rate...")
     for a in alphas:
-        model = NeuralNetwork(default_weights, default_regularization, a)
+        model = NeuralNetwork(default_weights, default_regularization, a, default_beta)
         alpha_metrics[a] = cross_validate(model, x, y, k_fold, default_bs, rs)
         print("\tAlpha = {} with {} mean F1-Score.".format(a, np.mean(alpha_metrics[a])))
 
@@ -56,26 +58,38 @@ def optimize(args):
     batch_metrics = {}
     print("Optimizing the batch size...")
     for bs in batch_sizes:
-        model = NeuralNetwork(default_weights, default_regularization, default_alpha)
+        model = NeuralNetwork(default_weights, default_regularization, default_alpha, default_beta)
         batch_metrics[bs] = cross_validate(model, x, y, k_fold, bs, rs)
         print("\tBatch size = {} with {} mean F1-Score.".format(bs, np.mean(batch_metrics[bs])))
 
     bs_df = DataFrame(batch_metrics)
     bs_df.to_csv(path.join(results_dt_path, 'cv_batchsize.csv'), header=True, index=False)
 
+    beta_metrics = {}
+    print("Optimizing the beta...")
+    for b in betas:
+        model = NeuralNetwork(default_weights, default_regularization, default_alpha, b)
+        beta_metrics[b] = cross_validate(model, x, y, k_fold, default_bs, rs)
+        print("\tBeta = {} with {} mean F1-Score.".format(b, np.mean(beta_metrics[b])))
+
+    beta_df = DataFrame(beta_metrics)
+    beta_df.to_csv(path.join(results_dt_path, 'cv_beta.csv'), header=True, index=False)
+
     best_layer = layer_df.mean(axis=1).idxmax(axis=1)
     best_r = r_df.mean(axis=1).idxmax(axis=1)
     best_alpha = alpha_df.mean(axis=1).idxmax(axis=1)
     best_bs = bs_df.mean(axis=1).idxmax(axis=1)
+    best_beta = beta_df.mean(axis=1).idxmax(axis=1)
 
     print("Best layer number: {}".format(best_layer))
     print("Best regularization: {}".format(best_r))
     print("Best alpha: {}".format(best_alpha))
     print("Best batch size: {}".format(best_bs))
+    print("Best beta: {}".format(best_beta))
 
     with open(path.join(results_dt_path, 'best.csv'), 'w') as best:
-        best.write('best_layer,best_r,best_alpha,batch_size\n')
-        best.write('{},{},{},{}\n'.format(best_layer, best_r, best_alpha, best_bs))
+        best.write('best_layer,best_r,best_alpha,batch_size,beta\n')
+        best.write('{},{},{},{}\n'.format(best_layer, best_r, best_alpha, best_bs, best_beta))
 
 
 def evaluate(args):
@@ -93,8 +107,9 @@ def evaluate(args):
     r = bests[1]
     a = bests[2]
     bs = int(bests[3])
+    b = bests[5]
 
-    model = NeuralNetwork(w, r, a)
+    model = NeuralNetwork(w, r, a, b)
 
     # Number of folds to get 30% test set
     k = np.ceil(x.shape[0] / (x.shape[0] * 0.3))

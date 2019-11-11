@@ -5,7 +5,7 @@ import numpy as np
 
 class NeuralNetwork(Model):
 
-    def __init__(self, w, r, alpha):
+    def __init__(self, w, r, alpha, beta):
         """Initialize the network's parameters.
 
         a: list
@@ -19,14 +19,20 @@ class NeuralNetwork(Model):
 
         :param alpha: float
             Learning rate.
+
+        :param beta: float
+            Moving average param.
         """
         self.alpha = alpha
+        self.beta = beta
+
         self.w = w                                                    # weights
         self.r = r                                                    # lambda in regularization
         self.a = [np.mat([]) for _ in range(self.n_layers + 1)]       # activation values
         self.z = [np.mat([]) for _ in range(self.n_layers + 1)]       # values before g()
         self.d = [np.mat([]) for _ in range(self.n_layers)]           # deltas
         self.g = []                                                   # gradients
+        self.m = []                                                   # moving average
 
     @property
     def n_layers(self):
@@ -140,6 +146,7 @@ class NeuralNetwork(Model):
         """
         n = x.shape[0]
         self.g = [np.zeros(self.w[i].shape) for i in range(self.n_layers)]
+        self.m = [np.zeros(self.w[i].shape) for i in range(self.n_layers)]
 
         for i in range(n):
             # Deltas for output neurons
@@ -153,7 +160,7 @@ class NeuralNetwork(Model):
 
         # Update weights
         for k in range(self.last_layer, -1, -1):
-            self.w[k] = self.w[k] - np.multiply(self.alpha, self.g[k])
+            self.w[k] = self.w[k] - np.multiply(self.alpha, self.m[k])
 
     def update_deltas(self, x):
         """Update delta given a x[i].
@@ -182,3 +189,4 @@ class NeuralNetwork(Model):
         for k in range(self.last_layer, -1, -1):
             p = np.multiply(self.w[k][:, 1:], self.r)  # regularization
             self.g[k][:, 1:] = np.multiply(1 / n, self.g[k][:, 1:] + p)
+            self.m[k] = np.multiply(self.beta, self.m[k]) + self.g[k]  # momentum

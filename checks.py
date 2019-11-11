@@ -19,7 +19,7 @@ def main(args):
 	x, y = load_benchmark(dataset_path)
 	epsilon = 0.0000010000
 
-	model = NeuralNetwork(deepcopy(initial_weights), r, 0.99)
+	model = NeuralNetwork(deepcopy(initial_weights), r, 0.99, 0)
 
 	print("Parâmetro de regularização lambda={}\n".format(round(r, 3)))
 	print("Inicializando rede com a seguinte estrutura de neurônios por camadas: {}\n".format([n_inputs] + n_neurons + [n_outputs]))
@@ -81,7 +81,7 @@ def main(args):
 	print("\tDataset completo processado. Calculando gradientes regularizados")
 
 	# model.final_gradients(x.shape[0])
-	model = NeuralNetwork(deepcopy(initial_weights), r, 0.99)
+	model = NeuralNetwork(deepcopy(initial_weights), r, 0.99, 0)
 	model.fit(x, y, x.shape[0])
 	for t in range(model.n_layers):
 		print("\t\tGradientes finais para Theta{} (com regularizacao):\n{}".format(t + 1, str_matrix(model.g[t], '\t\t\t')))
