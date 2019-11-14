@@ -10,15 +10,22 @@ def optimize(args):
     results_dt_path = results_path.format(args.optimize)
 
     x, y = load_data(args.optimize)
+
+    classes = np.unique(y)
+    n_classes = len(classes)
+
     rs = np.random.RandomState(22)
 
     batch_sizes = [5, 50, 100, 200, x.shape[0]]
     n_layers = [1, 2, 3, 5, 10, 25, 50, 100]
+    n_neurons = [1, 2, 3, 5, 10, 15]
     r_param = [0.01, 0.1, 0.5, 0.9]
     alphas = [0.003, 0.01, 0.1, 0.2, 0.5]
     betas = [0, 0.25, 0.50, 0.75, 0.99]
 
-    default_weights = weights(5, rs)
+    default_n_layers = 2
+    default_n_neurons = 5
+    default_weights = [weights(default_n_neurons, rs) for _ in range(default_n_layers)] + [weights(n_classes, rs)]
     default_regularization = 0.5
     default_alpha = 0.1
     default_beta = 0.5
@@ -27,13 +34,24 @@ def optimize(args):
     print("Optimizing number of layers...")
     layer_metrics = {}
     for n in n_layers:
-        w = [weights(n, rs) for _ in range(n)]
+        w = [weights(default_n_neurons, rs) for _ in range(n)] + [weights(n_classes, rs)]
         model = NeuralNetwork(w, default_regularization, default_alpha, default_beta)
         layer_metrics[n] = cross_validate(model, x, y, k_fold, default_bs, rs)
         print("\tNumber of layers = {} with {} mean F1-Score.".format(n, np.mean(layer_metrics[n])))
 
     layer_df = DataFrame(layer_metrics)
-    layer_df.to_csv(path.join(results_dt_path, 'cv_weights.csv'), header=True, index=False)
+    layer_df.to_csv(path.join(results_dt_path, 'cv_layers.csv'), header=True, index=False)
+
+    print("Optimizing number of neurons on hidden layers...")
+    neuron_metrics = {}
+    for n in n_neurons:
+        w = [weights(n, rs) for _ in range(default_n_layers)] + [weights(n_classes, rs)]
+        model = NeuralNetwork(w, default_regularization, default_alpha, default_beta)
+        neuron_metrics[n] = cross_validate(model, x, y, k_fold, default_bs, rs)
+        print("\tNumber of neurons = {} with {} mean F1-Score.".format(n, np.mean(neuron_metrics[n])))
+
+    neuron_df = DataFrame(neuron_metrics)
+    neuron_df.to_csv(path.join(results_dt_path, 'cv_neurons.csv'), header=True, index=False)
 
     print("Optimizing the regularization parameter...")
     r_metrics = {}
@@ -76,20 +94,22 @@ def optimize(args):
     beta_df.to_csv(path.join(results_dt_path, 'cv_beta.csv'), header=True, index=False)
 
     best_layer = layer_df.mean(axis=1).idxmax(axis=1)
+    best_neuron = neuron_df.mean(axis=1).idxmax(axis=1)
     best_r = r_df.mean(axis=1).idxmax(axis=1)
     best_alpha = alpha_df.mean(axis=1).idxmax(axis=1)
     best_bs = bs_df.mean(axis=1).idxmax(axis=1)
     best_beta = beta_df.mean(axis=1).idxmax(axis=1)
 
     print("Best layer number: {}".format(best_layer))
+    print("Best neuron number: {}".format(best_neuron))
     print("Best regularization: {}".format(best_r))
     print("Best alpha: {}".format(best_alpha))
     print("Best batch size: {}".format(best_bs))
     print("Best beta: {}".format(best_beta))
 
     with open(path.join(results_dt_path, 'best.csv'), 'w') as best:
-        best.write('best_layer,best_r,best_alpha,batch_size,beta\n')
-        best.write('{},{},{},{}\n'.format(best_layer, best_r, best_alpha, best_bs, best_beta))
+        best.write('best_layer,best_neuron,best_r,best_alpha,batch_size,beta\n')
+        best.write('{},{},{},{}\n'.format(best_layer, best_neuron, best_r, best_alpha, best_bs, best_beta))
 
 
 def evaluate(args):

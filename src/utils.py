@@ -247,7 +247,7 @@ def weights(n, random_state):
 
     :return: np.array
     """
-    w = random_state.normal(0, 1, (n + 1, 1))
+    w = random_state.normal(0, 1, (n + 1, n))
     w[0, 0] = 1  # bias
     return w
 
