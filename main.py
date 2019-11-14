@@ -25,7 +25,11 @@ def optimize(args):
 
     default_n_layers = 2
     default_n_neurons = 5
-    default_weights = [weights(default_n_neurons, rs) for _ in range(default_n_layers)] + [weights(n_classes, rs)]
+
+    default_weights = [weights(x.shape[1] + 1, default_n_neurons, rs)]
+    default_weights += [weights(default_n_neurons + 1, default_n_neurons, rs) for _ in range(default_n_layers)]
+    default_weights += [weights(n_classes, default_n_neurons, rs)]
+
     default_regularization = 0.5
     default_alpha = 0.1
     default_beta = 0.5
@@ -34,7 +38,10 @@ def optimize(args):
     print("Optimizing number of layers...")
     layer_metrics = {}
     for n in n_layers:
-        w = [weights(default_n_neurons, rs) for _ in range(n)] + [weights(n_classes, rs)]
+        w = [weights(x.shape[1] + 1, default_n_neurons, rs)]
+        w += [weights(default_n_neurons + 1, default_n_neurons, rs) for _ in range(n)]
+        w += [weights(n_classes, default_n_neurons, rs)]
+
         model = NeuralNetwork(w, default_regularization, default_alpha, default_beta)
         layer_metrics[n] = cross_validate(model, x, y, k_fold, default_bs, rs)
         print("\tNumber of layers = {} with {} mean F1-Score.".format(n, np.mean(layer_metrics[n])))
@@ -45,7 +52,10 @@ def optimize(args):
     print("Optimizing number of neurons on hidden layers...")
     neuron_metrics = {}
     for n in n_neurons:
-        w = [weights(n, rs) for _ in range(default_n_layers)] + [weights(n_classes, rs)]
+        w = [weights(x.shape[1] + 1, n, rs)]
+        w += [weights(n + 1, n, rs) for _ in range(default_n_layers)]
+        w += [weights(n_classes, n, rs)]
+
         model = NeuralNetwork(w, default_regularization, default_alpha, default_beta)
         neuron_metrics[n] = cross_validate(model, x, y, k_fold, default_bs, rs)
         print("\tNumber of neurons = {} with {} mean F1-Score.".format(n, np.mean(neuron_metrics[n])))

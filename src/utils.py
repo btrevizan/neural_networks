@@ -236,10 +236,13 @@ def load_benchmark(dataset_path):
     return x, y
 
 
-def weights(n, random_state):
+def weights(n, m, random_state):
     """Create a random matrix of weights.
 
     :param n: int
+        Number of neurons of the next layer.
+
+    :param m: int
         Number of neurons.
 
     :param random_state: instance of numpy.random.RandomState
@@ -247,7 +250,7 @@ def weights(n, random_state):
 
     :return: np.array
     """
-    w = random_state.normal(0, 1, (n + 1, n))
+    w = random_state.normal(0, 1, (n, m))
     w[0, 0] = 1  # bias
     return w
 
