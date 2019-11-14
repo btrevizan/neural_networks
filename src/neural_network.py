@@ -110,7 +110,7 @@ class NeuralNetwork(Model):
 
         :return: float
         """
-        c = np.multiply(-y, np.log2(f)) - np.multiply(1 - y, np.log2(1 - f))
+        c = np.multiply(-y, np.log(f)) - np.multiply(1 - y, np.log(1 - f))
         return np.sum(c)
 
     def regularization(self, n):
@@ -187,6 +187,6 @@ class NeuralNetwork(Model):
             Number of instances (x.shape[0]).
         """
         for k in range(self.last_layer, -1, -1):
-            p = np.multiply(self.w[k][:, 1:], self.r)  # regularization
-            self.g[k][:, 1:] = np.multiply(1 / n, self.g[k][:, 1:] + p)
+            p = np.multiply(self.w[k], self.r)  # regularization
+            self.g[k] = np.multiply(1 / n, self.g[k] + p)
             self.m[k] = np.multiply(self.beta, self.m[k]) + self.g[k]  # momentum

@@ -60,12 +60,12 @@ def main(args):
 	print("\n--------------------------------------------")
 	print("Rodando backpropagation")
 
-
-
 	for i in range(x.shape[0]):
 		print("\tCalculando gradientes com base no exemplo {}".format(i + 1))
 
 		model.g = [np.zeros(model.w[i].shape) for i in range(model.n_layers)]
+		model.m = [np.zeros(model.w[i].shape) for i in range(model.n_layers)]
+
 		pred = model.forward_propagation(x[i, :])
 		model.d[model.last_layer] = pred - y[i, :]
 		model.update_deltas(x[i, :])
@@ -80,15 +80,15 @@ def main(args):
 
 	print("\tDataset completo processado. Calculando gradientes regularizados")
 
-	# model.final_gradients(x.shape[0])
 	model = NeuralNetwork(deepcopy(initial_weights), r, 0.99, 0)
 	model.fit(x, y, x.shape[0])
+
 	for t in range(model.n_layers):
 		print("\t\tGradientes finais para Theta{} (com regularizacao):\n{}".format(t + 1, str_matrix(model.g[t], '\t\t\t')))
 
 	print("\n--------------------------------------------")
 	print("Rodando verificacao numerica de gradientes (epsilon={})".format(epsilon))
-	gradients = []
+
 	errors = []
 	for t in range(model.n_layers):
 		g = deepcopy(model.g[t])
@@ -96,19 +96,19 @@ def main(args):
 
 		for i in range(g.shape[0]):
 			for j in range(g.shape[1]):
-				model.w[t][i, j] += epsilon
-				c1 = model.cost(x, y)
-				model.w[t][i, j] -= epsilon
+				w = model.w[t][i, j]
 
-				model.w[t][i, j] -= epsilon
+				model.w[t][i, j] = w + epsilon
+				c1 = model.cost(x, y)
+
+				model.w[t][i, j] = w - epsilon
 				c2 = model.cost(x, y)
-				model.w[t][i, j] += epsilon
 
 				g[i, j] = (c1 - c2) / (2 * epsilon)
+				errors[t] += abs(g[i, j] - model.g[t][i, j])
 
-				errors[t] += abs(g[i, j] - model.w[t][i, j])
+				model.w[t][i, j] = w
 
-		gradients.append(g)
 		print("\tGradiente numerico de Theta{}:\n{}".format(t + 1, str_matrix(g, '\t\t')))
 
 	print("\n--------------------------------------------")
