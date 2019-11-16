@@ -25,7 +25,7 @@ class NeuralNetwork(Model):
         """
         self.alpha = alpha
         self.beta = beta
-        self.epoch = 100
+        self.epoch = 20
 
         self.w = w                                                    # weights
         self.r = r                                                    # lambda in regularization
