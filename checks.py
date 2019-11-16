@@ -89,13 +89,15 @@ def main(args):
 	print("\n--------------------------------------------")
 	print("Rodando verificacao numerica de gradientes (epsilon={})".format(epsilon))
 
-	errors = []
-	for t in range(model.n_layers):
-		g = deepcopy(model.g[t])
-		errors.append(0)
+	trained_gradients = deepcopy(model.g)
 
-		for i in range(g.shape[0]):
-			for j in range(g.shape[1]):
+	model = NeuralNetwork(deepcopy(initial_weights), r, 0.99, 0)
+	model.g = [np.zeros(model.w[i].shape) for i in range(model.n_layers)]
+
+	for t in range(model.n_layers):
+
+		for i in range(model.g[t].shape[0]):
+			for j in range(model.g[t].shape[1]):
 				w = model.w[t][i, j]
 
 				model.w[t][i, j] = w + epsilon
@@ -104,17 +106,16 @@ def main(args):
 				model.w[t][i, j] = w - epsilon
 				c2 = model.cost(x, y)
 
-				g[i, j] = (c1 - c2) / (2 * epsilon)
-				errors[t] += abs(g[i, j] - model.g[t][i, j])
-
+				model.g[t][i, j] += (c1 - c2) / (2 * epsilon)
 				model.w[t][i, j] = w
 
-		print("\tGradiente numerico de Theta{}:\n{}".format(t + 1, str_matrix(g, '\t\t')))
+		print("\tGradiente numerico de Theta{}:\n{}".format(t + 1, str_matrix(model.g[t], '\t\t')))
 
 	print("\n--------------------------------------------")
 	print("Verificando corretude dos gradientes com base nos gradientes numericos:")
 	for t in range(model.n_layers):
-		print("\tErro entre gradiente via backprop e gradiente numerico para Theta{}: {}".format(t + 1, errors[t]))
+		errors = np.sum(np.abs(model.g[t] - trained_gradients[t]))
+		print("\tErro entre gradiente via backprop e gradiente numerico para Theta{}: {}".format(t + 1, errors))
 
 
 def str_matrix(m, prefix=''):
@@ -123,7 +124,7 @@ def str_matrix(m, prefix=''):
 		res += prefix
 
 		for j in range(m.shape[1]):
-			res += "{} ".format(round(m[i, j], precision))
+			res += "{0:.5f} ".format(round(m[i, j], precision))
 
 		res += "\n"
 
