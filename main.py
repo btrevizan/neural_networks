@@ -127,16 +127,16 @@ def optimize_batchsizes(results_dt_path, x, y, rs, defaults):
 
 def optimize_nlayers(results_dt_path, x, y, rs, defaults):
     n_layers = [1, 2, 3, 5, 10, 25, 50, 100]
-    n_classes = len(np.unique(y))
+    n_classes = y.shape[1]
     layer_metrics = {}
 
     print("Optimizing number of layers...")
     start = int(time())
 
     for n in n_layers:
-        w = [weights(x.shape[1] + 1, defaults['default_n_neurons'], rs)]
-        w += [weights(defaults['default_n_neurons'] + 1, defaults['default_n_neurons'], rs) for _ in range(n)]
-        w += [weights(n_classes, defaults['default_n_neurons'], rs)]
+        w = [weights(defaults['default_n_neurons'], x.shape[1] + 1, rs)]
+        w += [weights(defaults['default_n_neurons'], defaults['default_n_neurons'] + 1, rs) for _ in range(n - 1)]
+        w += [weights(n_classes, defaults['default_n_neurons'] + 1, rs)]
 
         start_i = int(time())
         layer_metrics[n] = run(x, y, w,
@@ -165,16 +165,16 @@ def optimize_nlayers(results_dt_path, x, y, rs, defaults):
 
 def optimize_nneurons(results_dt_path, x, y, rs, defaults):
     n_neurons = [1, 2, 3, 5, 10, 15]
-    n_classes = len(np.unique(y))
+    n_classes = y.shape[1]
     neuron_metrics = {}
 
     print("Optimizing number of neurons on hidden layers...")
     start = int(time())
 
     for n in n_neurons:
-        w = [weights(x.shape[1] + 1, n, rs)]
-        w += [weights(n + 1, n, rs) for _ in range(defaults['default_n_layers'])]
-        w += [weights(n_classes, n, rs)]
+        w = [weights(n, x.shape[1] + 1, rs)]
+        w += [weights(n, n + 1, rs) for _ in range(defaults['default_n_layers'])]
+        w += [weights(n_classes, n + 1, rs)]
 
         start_i = int(time())
         neuron_metrics[n] = run(x, y, w,

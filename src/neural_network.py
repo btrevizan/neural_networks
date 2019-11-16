@@ -57,8 +57,13 @@ class NeuralNetwork(Model):
                 self.backward_propagation(x[b * batch_size:, :], y[b * batch_size:])
 
     def predict(self, x) -> list:
-        predictions = [np.argmax(np.ravel(self.forward_propagation(x[i]))) for i in range(len(x))]
-        return predictions
+        predictions = []
+        for i in range(x.shape[0]):
+            prob_class = self.forward_propagation(x[i, :])
+            pred_class = np.argmax(prob_class)
+            predictions.append(pred_class)
+
+        return np.array(predictions)
 
     def forward_propagation(self, x):
         """Forward propagation.

@@ -3,14 +3,14 @@ import numpy as np
 
 
 def normalize(data):
-    for j in range(data.shape[1]):
+    for j in range(data.shape[1] - 1):
         dmin = np.min(data[:, j])
         data[:, j] = (data[:, j] - dmin) / (np.max(data[:, j]) - dmin)
 
     return data
 
 # Remove id column and replace missing values for the mean value of the attribute
-cancer = read_csv('tests/datasets/breast-cancer-wisconsin.data', index_col=0, header=None, na_values='?')
+cancer = read_csv('tests/datasets/breast-cancer.data', index_col=0, header=None, na_values='?')
 
 rows, cols = np.where(cancer.isnull() == True)
 
@@ -22,7 +22,7 @@ for j in set(cols):
         r = np.where(cancer[:, -1] == c)
         cancer[rows, j] = np.nanmean(cancer[r, j])
 
-DataFrame(cancer).to_csv('tests/datasets/breast-cancer-wisconsin-processed.csv', header=False, index=False)
+DataFrame(cancer).to_csv('tests/datasets/breast-cancer-processed.csv', header=False, index=False)
 
 # Encode labels and remove zeroed feature
 iono = read_csv('tests/datasets/ionosphere.data', index_col=None, header=None).values
@@ -38,11 +38,6 @@ DataFrame(iono).to_csv('tests/datasets/ionosphere-processed.csv', header=False, 
 
 # Convert to csv and remove header
 pima = read_csv('tests/datasets/pima.tsv', index_col=None, header=0, sep='\t').values
-
-for j in range(pima.shape[1]):
-    dmax = np.max(pima[:, j])
-    pima[:, j] = (pima[:, j] - dmax) / (dmax - np.min(pima[:, j]))
-
 pima = normalize(pima)
 DataFrame(pima).to_csv('tests/datasets/pima-processed.csv', header=False, index=False, sep=',')
 

@@ -1,3 +1,4 @@
+from sklearn.preprocessing import OneHotEncoder
 from pandas import read_csv, concat
 from .metrics import Scorer
 from math import ceil
@@ -76,14 +77,15 @@ def cross_validate(model, x, y, k, batch_size, random_state):
 
     for train_i, test_i in stratified_split(y, k, random_state):
         x_train = x[train_i, :]
-        y_train = y[train_i]
+        y_train = y[train_i, :]
 
         x_test = x[test_i, :]
-        y_test = y[test_i]
+        y_test = y[test_i, :]
 
         model.fit(x_train, y_train, batch_size)
         y_pred = model.predict(x_test)
 
+        y_test = np.where(y_test == 1)[1]
         scorer = Scorer(y_test, y_pred, n_labels)
         metrics.append(scorer.f1_score())
 
@@ -132,7 +134,7 @@ def evaluate_cost(model, x, y, k, batch_size, random_state):
                 k = slice(j, j + batch_size)
 
                 model.backward_propagation(x_train[k, :], y_train[k])
-                
+
                 bs = (j + batch_size) - j
                 cost = model.cost(x_test[k, :], y_test[k])
 
@@ -174,7 +176,10 @@ def load_data(dataset):
     x, y = data.iloc[:, :-1].values, data.iloc[:, -1].values
 
     x = np.asmatrix(x)
-    y = np.asmatrix(y)
+    y = np.asmatrix(y).T
+
+    encoder = OneHotEncoder(categories='auto')
+    y = encoder.fit_transform(y).A
 
     return x, y
 
