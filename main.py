@@ -126,7 +126,7 @@ def optimize_batchsizes(results_dt_path, x, y, rs, defaults):
 
 
 def optimize_nlayers(results_dt_path, x, y, rs, defaults):
-    n_layers = [1, 2, 3, 5, 10, 25, 50, 100, 150]
+    n_layers = [1, 2, 3, 5, 10, 25, 50, 100, 150, 200, 250, 500, 1000]
     n_classes = y.shape[1]
     layer_metrics = {}
 
