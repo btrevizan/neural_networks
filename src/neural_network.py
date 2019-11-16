@@ -188,5 +188,8 @@ class NeuralNetwork(Model):
         """
         for k in range(self.last_layer, -1, -1):
             p = np.multiply(self.w[k], self.r)  # regularization
-            self.g[k] = np.multiply(1 / n, self.g[k] + p)
+            p[:, 0] = 0  # ignore bias
+            
+            self.g[k] = self.g[k] + p
+            self.g[k] = np.multiply(self.g[k], 1 / n)
             self.m[k] = np.multiply(self.beta, self.m[k]) + self.g[k]  # momentum
