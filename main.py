@@ -164,7 +164,7 @@ def optimize_nlayers(results_dt_path, x, y, rs, defaults):
 
 
 def optimize_nneurons(results_dt_path, x, y, rs, defaults):
-    n_neurons = [1, 2, 3, 5, 10, 15, 25, 50, 100]
+    n_neurons = [1, 2, 3, 5, 10, 15, 25, 50, 100, 200, 400, 800, 1600]
     n_classes = y.shape[1]
     neuron_metrics = {}
 
@@ -233,7 +233,7 @@ def optimize_regularization(results_dt_path, x, y, rs, defaults):
 
 
 def optimize_alpha(results_dt_path, x, y, rs, defaults):
-    alphas = [0.003, 0.01, 0.1, 0.2, 0.5, 0.9]
+    alphas = [0.001, 0.01, 0.1, 0.2, 0.5, 0.9, 0.99]
     alpha_metrics = {}
 
     print("Optimizing the learning rate...")
