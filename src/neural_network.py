@@ -25,6 +25,7 @@ class NeuralNetwork(Model):
         """
         self.alpha = alpha
         self.beta = beta
+        self.epoch = 10
 
         self.w = w                                                    # weights
         self.r = r                                                    # lambda in regularization
@@ -46,13 +47,14 @@ class NeuralNetwork(Model):
         n = x.shape[0]
         b = np.ceil(n / batch_size)
 
-        for i in range(int(b)):
-            j = i * batch_size
-            k = slice(j, j + batch_size)
-            self.backward_propagation(x[k, :], y[k])
+        for _ in range(self.epoch):
+            for i in range(int(b)):
+                j = i * batch_size
+                k = slice(j, j + batch_size)
+                self.backward_propagation(x[k, :], y[k])
 
-        if n - b * batch_size > 0:
-            self.backward_propagation(x[b * batch_size:, :], y[b * batch_size:])
+            if n - b * batch_size > 0:
+                self.backward_propagation(x[b * batch_size:, :], y[b * batch_size:])
 
     def predict(self, x) -> list:
         predictions = [np.argmax(np.ravel(self.forward_propagation(x[i]))) for i in range(len(x))]

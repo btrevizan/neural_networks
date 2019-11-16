@@ -126,30 +126,30 @@ def evaluate_cost(model, x, y, k, batch_size, random_state):
         n = x_train.shape[0]
         b = np.ceil(n / batch_size)
 
-        for i in range(int(b)):
-            j = i * batch_size
-            k = slice(j, j + batch_size)
+        for _ in range(model.epoch):
+            for i in range(int(b)):
+                j = i * batch_size
+                k = slice(j, j + batch_size)
 
-            model.backward_propagation(x_train[k, :], y_train[k])
+                model.backward_propagation(x_train[k, :], y_train[k])
+                
+                bs = (j + batch_size) - j
+                cost = model.cost(x_test[k, :], y_test[k])
 
-            bs = (j + batch_size) - j
-            cost = model.cost(x_test[k, :], y_test[k])
+                print("Cost = {}".format(cost))
 
-            print("Cost = {}".format(cost))
+                costs.setdefault(bs, [])
+                costs[bs].append(cost)
 
-            costs.setdefault(bs, [])
-            costs[bs].append(cost)
+            bs = n - b * batch_size
+            if bs > 0:
+                model.backward_propagation(x_train[b * batch_size:, :], y_train[b * batch_size:])
+                cost = model.cost(x_test[b * batch_size:, :], y_test[b * batch_size:])
 
-        bs = n - b * batch_size
-        if bs > 0:
-            model.backward_propagation(x_train[b * batch_size:, :], y_train[b * batch_size:])
+                print("Cost = {}".format(cost))
 
-            cost = model.cost(x_test[b * batch_size:, :], y_test[b * batch_size:])
-
-            print("Cost = {}".format(cost))
-
-            costs.setdefault(bs, [])
-            costs[bs].append(cost)
+                costs.setdefault(bs, [])
+                costs[bs].append(cost)
 
     return costs
 
