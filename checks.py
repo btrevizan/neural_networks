@@ -41,7 +41,7 @@ def main(args):
 		print("\tPropagando entrada {}".format(x[i, :]))
 
 		f = model.forward_propagation(x[i, :])
-		cost = model.cost_x(y[i, :], f) + model.regularization(x.shape[0])
+		cost = model.cost_x(y[i, :], f)
 
 		print("\t\ta1: {}\n".format(model.a[0]))
 
