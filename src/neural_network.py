@@ -170,10 +170,10 @@ class NeuralNetwork(Model):
         """
         # Deltas for hidden layers
         for k in range(self.last_layer, 0, -1):
-            deltas = np.matmul(self.w[k].T, self.d[k])
-            deltas = np.multiply(deltas, self.a[k].T)
-            deltas = np.multiply(deltas, 1 - self.a[k].T)
-            self.d[k - 1] = deltas[1:, :].T
+            deltas = np.matmul(self.w[k].T, self.d[k].T)
+            deltas = np.multiply(deltas.T, self.a[k])
+            deltas = np.multiply(deltas, 1 - self.a[k])
+            self.d[k - 1] = deltas[:, 1:]
 
     def accumulate_gradients(self):
         """Just accumulate gradients for mini-batch training."""
