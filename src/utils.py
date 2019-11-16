@@ -26,7 +26,7 @@ def stratified_split(y, n_splits, random_state):
         Each element (a tuple) has the instances' index
         for training set and for the test set, respectively.
     """
-    sety = sorted(set(y))
+    sety = sorted(set(np.ravel(y)))
     classes_indexes = []
 
     for c in sety:
@@ -168,7 +168,7 @@ def load_data(dataset):
     if dataset not in datasets:
         raise ValueError('{} does not exist. The option are breast_cancer, ionosphere, pima, wine.'.format(dataset))
 
-    data_path = path.join(default_path, '{}.csv'.format(dataset))
+    data_path = path.join(default_path, '{}-processed.csv'.format(dataset))
     data = read_csv(data_path, header=0)
 
     x, y = data.iloc[:, :-1].values, data.iloc[:, -1].values

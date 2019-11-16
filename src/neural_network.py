@@ -55,7 +55,7 @@ class NeuralNetwork(Model):
             self.backward_propagation(x[b * batch_size:, :], y[b * batch_size:])
 
     def predict(self, x) -> list:
-        predictions = [self.forward_propagation(x[i]) for i in range(len(x))]
+        predictions = [np.argmax(np.ravel(self.forward_propagation(x[i]))) for i in range(len(x))]
         return predictions
 
     def forward_propagation(self, x):
@@ -189,7 +189,7 @@ class NeuralNetwork(Model):
         for k in range(self.last_layer, -1, -1):
             p = np.multiply(self.w[k], self.r)  # regularization
             p[:, 0] = 0  # ignore bias
-            
+
             self.g[k] = self.g[k] + p
             self.g[k] = np.multiply(self.g[k], 1 / n)
             self.m[k] = np.multiply(self.beta, self.m[k]) + self.g[k]  # momentum
