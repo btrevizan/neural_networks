@@ -14,7 +14,7 @@ class Model:
         """
         raise NotImplementedError
 
-    def predict(self, x) -> list:
+    def predict(self, x):
         """Given a list of instances, predict a class for each one.
 
         :param x: matrix (numpy.ndarray)

@@ -9,7 +9,7 @@ import argparse
 
 def optimize(args):
     results_dt_path, x, y, rs = init(args)
-    defaults = get_defaults(x, len(np.unique(y)), rs)
+    defaults = get_defaults(x, y.shape[1], rs)
 
     if args.optimize == 'batchsize':
         optimize_batchsizes(results_dt_path, x, y, rs, defaults)
@@ -78,11 +78,11 @@ def get_defaults(x, n_classes, rs):
     defaults['default_n_layers'] = 2
     defaults['default_n_neurons'] = 5
 
-    defaults['default_weights'] = [weights(x.shape[1] + 1, defaults['default_n_neurons'], rs)]
-    defaults['default_weights'] += [weights(defaults['default_n_neurons'] + 1, defaults['default_n_neurons'], rs)
-                                    for _ in range(defaults['default_n_layers'])]
+    defaults['default_weights'] = [weights(defaults['default_n_neurons'], x.shape[1] + 1, rs)]
+    defaults['default_weights'] += [weights(defaults['default_n_neurons'], defaults['default_n_neurons'] + 1, rs)
+                                    for _ in range(defaults['default_n_layers'] - 1)]
 
-    defaults['default_weights'] += [weights(n_classes, defaults['default_n_neurons'], rs)]
+    defaults['default_weights'] += [weights(n_classes, defaults['default_n_neurons'] + 1, rs)]
 
     defaults['default_regularization'] = 0.5
     defaults['default_alpha'] = 0.1
@@ -93,7 +93,7 @@ def get_defaults(x, n_classes, rs):
 
 
 def optimize_batchsizes(results_dt_path, x, y, rs, defaults):
-    batch_sizes = [5, 50, 100, 200, x.shape[0]]
+    batch_sizes = [5, 10, 25, 50, 100, 200, 300, x.shape[0]]
     batch_metrics = {}
 
     print("Optimizing the batch size...")
@@ -117,7 +117,7 @@ def optimize_batchsizes(results_dt_path, x, y, rs, defaults):
     bs_df = DataFrame(batch_metrics)
     bs_df.to_csv(path.join(results_dt_path, 'cv_batchsize.csv'), header=True, index=False)
 
-    best_bs = bs_df.mean(axis=1).idxmax(axis=1)
+    best_bs = bs_df.mean(axis=0).idxmax(axis=1)
     print("Best batch size: {}".format(best_bs))
     print("Time elapsed: {} minutes".format((stop - start) // 60))
 
@@ -126,7 +126,7 @@ def optimize_batchsizes(results_dt_path, x, y, rs, defaults):
 
 
 def optimize_nlayers(results_dt_path, x, y, rs, defaults):
-    n_layers = [1, 2, 3, 5, 10, 25, 50, 100]
+    n_layers = [1, 2, 3, 5, 10, 25, 50, 100, 150]
     n_classes = y.shape[1]
     layer_metrics = {}
 
@@ -154,7 +154,7 @@ def optimize_nlayers(results_dt_path, x, y, rs, defaults):
     layer_df = DataFrame(layer_metrics)
     layer_df.to_csv(path.join(results_dt_path, 'cv_layers.csv'), header=True, index=False)
 
-    best_layer = layer_df.mean(axis=1).idxmax(axis=1)
+    best_layer = layer_df.mean(axis=0).idxmax(axis=1)
 
     print("Best layer number: {}".format(best_layer))
     print("Time elapsed: {} minutes".format((stop - start) // 60))
@@ -164,7 +164,7 @@ def optimize_nlayers(results_dt_path, x, y, rs, defaults):
 
 
 def optimize_nneurons(results_dt_path, x, y, rs, defaults):
-    n_neurons = [1, 2, 3, 5, 10, 15]
+    n_neurons = [1, 2, 3, 5, 10, 15, 25, 50, 100]
     n_classes = y.shape[1]
     neuron_metrics = {}
 
@@ -191,7 +191,7 @@ def optimize_nneurons(results_dt_path, x, y, rs, defaults):
     neuron_df = DataFrame(neuron_metrics)
     neuron_df.to_csv(path.join(results_dt_path, 'cv_neurons.csv'), header=True, index=False)
 
-    best_neuron = neuron_df.mean(axis=1).idxmax(axis=1)
+    best_neuron = neuron_df.mean(axis=0).idxmax(axis=1)
 
     print("Best neuron number: {}".format(best_neuron))
     print("Time elapsed: {} minutes".format((stop - start) // 60))
@@ -201,7 +201,7 @@ def optimize_nneurons(results_dt_path, x, y, rs, defaults):
 
 
 def optimize_regularization(results_dt_path, x, y, rs, defaults):
-    r_param = [0.01, 0.1, 0.5, 0.9]
+    r_param = [0.01, 0.1, 0.5, 0.9, 0.99]
     r_metrics = {}
 
     print("Optimizing the regularization parameter...")
@@ -223,7 +223,7 @@ def optimize_regularization(results_dt_path, x, y, rs, defaults):
 
     r_df = DataFrame(r_metrics)
     r_df.to_csv(path.join(results_dt_path, 'cv_regularization.csv'), header=True, index=False)
-    best_r = r_df.mean(axis=1).idxmax(axis=1)
+    best_r = r_df.mean(axis=0).idxmax(axis=1)
 
     print("Best regularization: {}".format(best_r))
     print("Time elapsed: {} minutes".format((stop - start) // 60))
@@ -233,7 +233,7 @@ def optimize_regularization(results_dt_path, x, y, rs, defaults):
 
 
 def optimize_alpha(results_dt_path, x, y, rs, defaults):
-    alphas = [0.003, 0.01, 0.1, 0.2, 0.5]
+    alphas = [0.003, 0.01, 0.1, 0.2, 0.5, 0.9]
     alpha_metrics = {}
 
     print("Optimizing the learning rate...")
@@ -256,7 +256,7 @@ def optimize_alpha(results_dt_path, x, y, rs, defaults):
     alpha_df = DataFrame(alpha_metrics)
     alpha_df.to_csv(path.join(results_dt_path, 'cv_alpha.csv'), header=True, index=False)
 
-    best_alpha = alpha_df.mean(axis=1).idxmax(axis=1)
+    best_alpha = alpha_df.mean(axis=0).idxmax(axis=1)
 
     print("Best alpha: {}".format(best_alpha))
     print("Time elapsed: {} minutes".format((stop - start) // 60))
@@ -288,7 +288,7 @@ def optimize_beta(results_dt_path, x, y, rs, defaults):
     beta_df = DataFrame(beta_metrics)
     beta_df.to_csv(path.join(results_dt_path, 'cv_beta.csv'), header=True, index=False)
 
-    best_beta = beta_df.mean(axis=1).idxmax(axis=1)
+    best_beta = beta_df.mean(axis=0).idxmax(axis=1)
 
     print("Best beta: {}".format(best_beta))
     print("Time elapsed: {} minutes".format((stop - start) // 60))

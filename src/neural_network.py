@@ -56,7 +56,7 @@ class NeuralNetwork(Model):
             if n - b * batch_size > 0:
                 self.backward_propagation(x[b * batch_size:, :], y[b * batch_size:])
 
-    def predict(self, x) -> list:
+    def predict(self, x):
         predictions = []
         for i in range(x.shape[0]):
             prob_class = self.forward_propagation(x[i, :])
