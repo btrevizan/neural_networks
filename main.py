@@ -96,6 +96,10 @@ def optimize_batchsizes(results_dt_path, x, y, rs, defaults):
     batch_sizes = [5, 10, 25, 50, 100, 200, 300, x.shape[0]]
     batch_metrics = {}
 
+    result_file = path.join(results_dt_path, 'cv_batchsize.csv')
+    with open(result_file, 'w') as file:
+        file.write("param_value,seconds_elapsed,it1,it2,it3,it4,it5,it6,it7,it8,it9,it10\n")
+
     print("Optimizing the batch size...")
     start = int(time())
 
@@ -109,15 +113,20 @@ def optimize_batchsizes(results_dt_path, x, y, rs, defaults):
                                 bs, rs)
 
         stop_i = int(time())
+
+        elapsed = stop_i - start_i
+        values = ','.join([str(v) for v in batch_metrics[bs]])
+        with open(result_file, 'a') as file:
+            file.write("{},{},{}\n".format(bs, elapsed, values))
+
         print("\tParam value = {} with {} mean F1-Score.".format(bs, np.mean(batch_metrics[bs])))
         print("\tTime elapsed: {} minutes".format((stop_i - start_i) // 60))
 
     stop = int(time())
 
     bs_df = DataFrame(batch_metrics)
-    bs_df.to_csv(path.join(results_dt_path, 'cv_batchsize.csv'), header=True, index=False)
-
     best_bs = bs_df.mean(axis=0).idxmax(axis=1)
+
     print("Best batch size: {}".format(best_bs))
     print("Time elapsed: {} minutes".format((stop - start) // 60))
 
@@ -129,6 +138,10 @@ def optimize_nlayers(results_dt_path, x, y, rs, defaults):
     n_layers = [1, 2, 3, 5, 10, 25, 50, 100, 150, 200, 250, 500, 1000]
     n_classes = y.shape[1]
     layer_metrics = {}
+
+    result_file = path.join(results_dt_path, 'cv_nlayers.csv')
+    with open(result_file, 'w') as file:
+        file.write("param_value,seconds_elapsed,it1,it2,it3,it4,it5,it6,it7,it8,it9,it10\n")
 
     print("Optimizing number of layers...")
     start = int(time())
@@ -146,14 +159,18 @@ def optimize_nlayers(results_dt_path, x, y, rs, defaults):
                                defaults['default_bs'], rs)
 
         stop_i = int(time())
+
+        elapsed = stop_i - start_i
+        values = ','.join([str(v) for v in layer_metrics[n]])
+        with open(result_file, 'a') as file:
+            file.write("{},{},{}\n".format(n, elapsed, values))
+
         print("\tNumber of layers = {} with {} mean F1-Score.".format(n, np.mean(layer_metrics[n])))
         print("\tTime elapsed: {} minutes".format((stop_i - start_i) // 60))
 
     stop = int(time())
 
     layer_df = DataFrame(layer_metrics)
-    layer_df.to_csv(path.join(results_dt_path, 'cv_layers.csv'), header=True, index=False)
-
     best_layer = layer_df.mean(axis=0).idxmax(axis=1)
 
     print("Best layer number: {}".format(best_layer))
@@ -167,6 +184,10 @@ def optimize_nneurons(results_dt_path, x, y, rs, defaults):
     n_neurons = [1, 2, 3, 5, 10, 15, 25, 50, 100, 200, 400, 800, 1600]
     n_classes = y.shape[1]
     neuron_metrics = {}
+
+    result_file = path.join(results_dt_path, 'cv_nneurons.csv')
+    with open(result_file, 'w') as file:
+        file.write("param_value,seconds_elapsed,it1,it2,it3,it4,it5,it6,it7,it8,it9,it10\n")
 
     print("Optimizing number of neurons on hidden layers...")
     start = int(time())
@@ -184,13 +205,18 @@ def optimize_nneurons(results_dt_path, x, y, rs, defaults):
                                 defaults['default_bs'], rs)
 
         stop_i = int(time())
+
+        elapsed = stop_i - start_i
+        values = ','.join([str(v) for v in neuron_metrics[n]])
+        with open(result_file, 'a') as file:
+            file.write("{},{},{}\n".format(n, elapsed, values))
+
         print("\tNumber of neurons = {} with {} mean F1-Score.".format(n, np.mean(neuron_metrics[n])))
         print("\tTime elapsed: {} minutes".format((stop_i - start_i) // 60))
 
     stop = int(time())
-    neuron_df = DataFrame(neuron_metrics)
-    neuron_df.to_csv(path.join(results_dt_path, 'cv_neurons.csv'), header=True, index=False)
 
+    neuron_df = DataFrame(neuron_metrics)
     best_neuron = neuron_df.mean(axis=0).idxmax(axis=1)
 
     print("Best neuron number: {}".format(best_neuron))
@@ -204,6 +230,10 @@ def optimize_regularization(results_dt_path, x, y, rs, defaults):
     r_param = [0.01, 0.1, 0.5, 0.9, 0.99]
     r_metrics = {}
 
+    result_file = path.join(results_dt_path, 'cv_regularization.csv')
+    with open(result_file, 'w') as file:
+        file.write("param_value,seconds_elapsed,it1,it2,it3,it4,it5,it6,it7,it8,it9,it10\n")
+
     print("Optimizing the regularization parameter...")
     start = int(time())
 
@@ -216,13 +246,18 @@ def optimize_regularization(results_dt_path, x, y, rs, defaults):
                            defaults['default_bs'], rs)
 
         stop_i = int(time())
+
+        elapsed = stop_i - start_i
+        values = ','.join([str(v) for v in r_metrics[r]])
+        with open(result_file, 'a') as file:
+            file.write("{},{},{}\n".format(r, elapsed, values))
+
         print("\tR = {} with {} mean F1-Score.".format(r, np.mean(r_metrics[r])))
         print("\tTime elapsed: {} minutes".format((stop_i - start_i) // 60))
 
     stop = int(time())
 
     r_df = DataFrame(r_metrics)
-    r_df.to_csv(path.join(results_dt_path, 'cv_regularization.csv'), header=True, index=False)
     best_r = r_df.mean(axis=0).idxmax(axis=1)
 
     print("Best regularization: {}".format(best_r))
@@ -236,6 +271,10 @@ def optimize_alpha(results_dt_path, x, y, rs, defaults):
     alphas = [0.001, 0.01, 0.1, 0.2, 0.5, 0.9, 0.99]
     alpha_metrics = {}
 
+    result_file = path.join(results_dt_path, 'cv_alpha.csv')
+    with open(result_file, 'w') as file:
+        file.write("param_value,seconds_elapsed,it1,it2,it3,it4,it5,it6,it7,it8,it9,it10\n")
+
     print("Optimizing the learning rate...")
     start = int(time())
 
@@ -248,14 +287,18 @@ def optimize_alpha(results_dt_path, x, y, rs, defaults):
                                defaults['default_bs'], rs)
 
         stop_i = int(time())
+
+        elapsed = stop_i - start_i
+        values = ','.join([str(v) for v in alpha_metrics[a]])
+        with open(result_file, 'a') as file:
+            file.write("{},{},{}\n".format(a, elapsed, values))
+
         print("\tAlpha = {} with {} mean F1-Score.".format(a, np.mean(alpha_metrics[a])))
         print("\tTime elapsed: {} minutes".format((stop_i - start_i) // 60))
 
     stop = int(time())
 
     alpha_df = DataFrame(alpha_metrics)
-    alpha_df.to_csv(path.join(results_dt_path, 'cv_alpha.csv'), header=True, index=False)
-
     best_alpha = alpha_df.mean(axis=0).idxmax(axis=1)
 
     print("Best alpha: {}".format(best_alpha))
@@ -269,6 +312,10 @@ def optimize_beta(results_dt_path, x, y, rs, defaults):
     betas = [0, 0.25, 0.50, 0.75, 0.99]
     beta_metrics = {}
 
+    result_file = path.join(results_dt_path, 'cv_beta.csv')
+    with open(result_file, 'w') as file:
+        file.write("param_value,seconds_elapsed,it1,it2,it3,it4,it5,it6,it7,it8,it9,it10\n")
+
     print("Optimizing the beta...")
     start = int(time())
 
@@ -281,13 +328,17 @@ def optimize_beta(results_dt_path, x, y, rs, defaults):
                               defaults['default_bs'], rs)
 
         stop_i = int(time())
+
+        elapsed = stop_i - start_i
+        values = ','.join([str(v) for v in beta_metrics[b]])
+        with open(result_file, 'a') as file:
+            file.write("{},{},{}\n".format(b, elapsed, values))
+
         print("\tBeta = {} with {} mean F1-Score.".format(b, np.mean(beta_metrics[b])))
         print("\tTime elapsed: {} minutes".format((stop_i - start_i) // 60))
 
     stop = int(time())
     beta_df = DataFrame(beta_metrics)
-    beta_df.to_csv(path.join(results_dt_path, 'cv_beta.csv'), header=True, index=False)
-
     best_beta = beta_df.mean(axis=0).idxmax(axis=1)
 
     print("Best beta: {}".format(best_beta))
