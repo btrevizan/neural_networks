@@ -1,0 +1,13 @@
+Optimizing the beta...
+	Beta = 0 with 0.9937925170068027 mean F1-Score.
+	Time elapsed: 5 minutes
+	Beta = 0.25 with 1.0 mean F1-Score.
+	Time elapsed: 5 minutes
+	Beta = 0.5 with 1.0 mean F1-Score.
+	Time elapsed: 5 minutes
+	Beta = 0.75 with 1.0 mean F1-Score.
+	Time elapsed: 6 minutes
+	Beta = 0.99 with 1.0 mean F1-Score.
+	Time elapsed: 5 minutes
+Best beta: 0.25
+Time elapsed: 27 minutes
