@@ -57,7 +57,7 @@ class Scorer:
 
         if tp == 0:
             return 0
-        
+
         return tp / (tp + fn)
 
     def precision(self, label=1):
@@ -91,10 +91,10 @@ class Scorer:
             recall = self.recall()
         else:
             tp = np.sum([self.tp(i) for i in range(n)])
-            precision = tp / (tp + np.sum([self.fp(i) for i in range(n)]))
-            recall = tp / (tp + np.sum([self.fn(i) for i in range(n)]))
+            precision = tp / (tp + np.sum([self.fp(i) for i in range(n)]) + 0.0001)
+            recall = tp / (tp + np.sum([self.fn(i) for i in range(n)]) + 0.0001)
 
-        return (2 * precision * recall) / (precision + recall)
+        return (2 * precision * recall) / (precision + recall + 0.0001)
 
     def balanced_accuracy(self):
         """Calculate balance accuracy.
