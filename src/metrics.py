@@ -54,6 +54,10 @@ class Scorer:
         """
         tp = self.tp(label)
         fn = self.fn(label)
+
+        if tp == 0:
+            return 0
+        
         return tp / (tp + fn)
 
     def precision(self, label=1):
@@ -66,6 +70,10 @@ class Scorer:
         """
         tp = self.tp(label)
         fp = self.fp(label)
+
+        if tp == 0:
+            return 0
+
         return tp / (tp + fp)
 
     def f1_score(self, label=0):

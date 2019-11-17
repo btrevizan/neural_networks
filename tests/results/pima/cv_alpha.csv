@@ -1,8 +1,1 @@
 param_value,seconds_elapsed,it1,it2,it3,it4,it5,it6,it7,it8,it9,it10
-0.001,964,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan
-0.01,956,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan
-0.1,805,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan
-0.2,643,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan
-0.5,591,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan
-0.9,554,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan
-0.99,824,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan
