@@ -1,0 +1,20 @@
+Optimizing the batch size...
+Optimizing the batch size...
+	Param value = 5 with 0.0 mean F1-Score.
+	Time elapsed: 40 minutes
+	Param value = 10 with 0.0 mean F1-Score.
+	Time elapsed: 36 minutes
+	Param value = 25 with 0.0 mean F1-Score.
+	Time elapsed: 37 minutes
+	Param value = 50 with 0.0 mean F1-Score.
+	Time elapsed: 36 minutes
+	Param value = 100 with 0.0 mean F1-Score.
+	Time elapsed: 37 minutes
+	Param value = 200 with 0.0 mean F1-Score.
+	Time elapsed: 36 minutes
+	Param value = 300 with 0.0 mean F1-Score.
+	Time elapsed: 34 minutes
+	Param value = 767 with 0.0 mean F1-Score.
+	Time elapsed: 31 minutes
+Best batch size: 5
+Time elapsed: 290 minutes
