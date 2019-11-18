@@ -87,13 +87,13 @@ def get_defaults(x, n_classes, rs):
     defaults['default_regularization'] = 0.5
     defaults['default_alpha'] = 0.1
     defaults['default_beta'] = 0.5
-    defaults['default_bs'] = 100
+    defaults['default_bs'] = x.shape[0] // 4
 
     return defaults
 
 
 def optimize_batchsizes(results_dt_path, x, y, rs, defaults):
-    batch_sizes = [5, 10, 25, 50, 100, 200, 300, x.shape[0]]
+    batch_sizes = [x.shape[0] // 16, x.shape[0] // 8, x.shape[0] // 4, x.shape[0] // 2, x.shape[0]]
     batch_metrics = {}
 
     result_file = path.join(results_dt_path, 'cv_batchsize.csv')
@@ -135,7 +135,7 @@ def optimize_batchsizes(results_dt_path, x, y, rs, defaults):
 
 
 def optimize_nlayers(results_dt_path, x, y, rs, defaults):
-    n_layers = [1, 2, 3, 5, 10, 25, 50, 100, 150, 200, 250, 500, 1000]
+    n_layers = [1, 2, 3, 5, 10, 25, 50, 100, 150, 200, 250, 500]
     n_classes = y.shape[1]
     layer_metrics = {}
 
@@ -181,7 +181,7 @@ def optimize_nlayers(results_dt_path, x, y, rs, defaults):
 
 
 def optimize_nneurons(results_dt_path, x, y, rs, defaults):
-    n_neurons = [1, 2, 3, 5, 10, 15, 25, 50, 100, 200, 400, 800, 1600]
+    n_neurons = [1, 2, 3, 5, 10, 15, 25, 50, 100, 200, 400]
     n_classes = y.shape[1]
     neuron_metrics = {}
 
