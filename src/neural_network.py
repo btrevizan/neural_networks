@@ -27,13 +27,13 @@ class NeuralNetwork(Model):
         self.beta = beta
         self.epoch = 50
 
-        self.w = w                                                    # weights
-        self.r = r                                                    # lambda in regularization
-        self.a = [np.mat([]) for _ in range(self.n_layers + 1)]       # activation values
-        self.z = [np.mat([]) for _ in range(self.n_layers + 1)]       # values before g()
-        self.d = [np.mat([]) for _ in range(self.n_layers)]           # deltas
-        self.g = []                                                   # gradients
-        self.m = []                                                   # moving average
+        self.w = w                                                          # weights
+        self.r = r                                                          # lambda in regularization
+        self.a = [np.mat([]) for _ in range(self.n_layers + 1)]             # activation values
+        self.z = [np.mat([]) for _ in range(self.n_layers + 1)]             # values before g()
+        self.d = [np.mat([]) for _ in range(self.n_layers)]                 # deltas
+        self.g = []                                                         # gradients
+        self.m = [np.zeros(self.w[i].shape) for i in range(self.n_layers)]  # moving average
 
     @property
     def n_layers(self):
@@ -153,7 +153,6 @@ class NeuralNetwork(Model):
         """
         n = x.shape[0]
         self.g = [np.zeros(self.w[i].shape) for i in range(self.n_layers)]
-        self.m = [np.zeros(self.w[i].shape) for i in range(self.n_layers)]
 
         for i in range(n):
             # Deltas for output neurons
