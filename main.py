@@ -67,7 +67,7 @@ def init(args):
     results_dt_path = results_path.format(args.dataset)
     x, y = load_data(args.dataset)
 
-    rs = np.random.RandomState(22)
+    rs = np.random.RandomState(25)
 
     return results_dt_path, x, y, rs
 
@@ -135,7 +135,7 @@ def optimize_batchsizes(results_dt_path, x, y, rs, defaults):
 
 
 def optimize_nlayers(results_dt_path, x, y, rs, defaults):
-    n_layers = [1, 2, 3, 5, 10, 25, 50, 100, 150, 200, 250, 500]
+    n_layers = range(20)
     n_classes = y.shape[1]
     layer_metrics = {}
 
@@ -181,7 +181,7 @@ def optimize_nlayers(results_dt_path, x, y, rs, defaults):
 
 
 def optimize_nneurons(results_dt_path, x, y, rs, defaults):
-    n_neurons = [1, 2, 3, 5, 10, 15, 25, 50, 100, 200, 400]
+    n_neurons = range(25)
     n_classes = y.shape[1]
     neuron_metrics = {}
 
