@@ -135,7 +135,7 @@ def optimize_batchsizes(results_dt_path, x, y, rs, defaults):
 
 
 def optimize_nlayers(results_dt_path, x, y, rs, defaults):
-    n_layers = range(21)
+    n_layers = range(1, 21)
     n_classes = y.shape[1]
     layer_metrics = {}
 
@@ -181,7 +181,7 @@ def optimize_nlayers(results_dt_path, x, y, rs, defaults):
 
 
 def optimize_nneurons(results_dt_path, x, y, rs, defaults):
-    n_neurons = range(0, 100, 5)
+    n_neurons = range(1, 100, 5)
     n_classes = y.shape[1]
     neuron_metrics = {}
 
