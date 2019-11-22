@@ -1,0 +1,13 @@
+Optimizing the batch size...
+	Param value = 21 with 0.7791716881293993 mean F1-Score.
+	Time elapsed: 13 minutes
+	Param value = 43 with 0.7783207542448495 mean F1-Score.
+	Time elapsed: 13 minutes
+	Param value = 87 with 0.7799609283326987 mean F1-Score.
+	Time elapsed: 13 minutes
+	Param value = 175 with 0.777823416126572 mean F1-Score.
+	Time elapsed: 13 minutes
+	Param value = 350 with 0.7788330260558574 mean F1-Score.
+	Time elapsed: 12 minutes
+Best batch size: 87
+Time elapsed: 67 minutes
