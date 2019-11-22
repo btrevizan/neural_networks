@@ -1,0 +1,5 @@
+batch_size,22
+best_r,0.1
+best_beta,0.75
+best_alpha,0.2
+best_neuron,200

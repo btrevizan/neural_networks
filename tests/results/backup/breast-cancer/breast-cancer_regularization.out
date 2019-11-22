@@ -1,0 +1,13 @@
+Optimizing the regularization parameter...
+	R = 0.01 with 0.9523711413448186 mean F1-Score.
+	Time elapsed: 27 minutes
+	R = 0.1 with 0.9577362285773171 mean F1-Score.
+	Time elapsed: 27 minutes
+	R = 0.5 with 0.9550045378975739 mean F1-Score.
+	Time elapsed: 22 minutes
+	R = 0.9 with 0.9524862978846003 mean F1-Score.
+	Time elapsed: 18 minutes
+	R = 0.99 with 0.9558496661756731 mean F1-Score.
+	Time elapsed: 18 minutes
+Best regularization: 0.1
+Time elapsed: 113 minutes
