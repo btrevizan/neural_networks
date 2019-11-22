@@ -1,0 +1,25 @@
+Optimizing number of neurons on hidden layers...
+	Number of neurons = 1 with 0.0 mean F1-Score.
+	Time elapsed: 30 minutes
+	Number of neurons = 2 with 0.0 mean F1-Score.
+	Time elapsed: 32 minutes
+	Number of neurons = 3 with 0.0 mean F1-Score.
+	Time elapsed: 26 minutes
+	Number of neurons = 5 with 0.0 mean F1-Score.
+	Time elapsed: 26 minutes
+	Number of neurons = 10 with 0.39120521389961443 mean F1-Score.
+	Time elapsed: 28 minutes
+	Number of neurons = 15 with 0.6127709033008397 mean F1-Score.
+	Time elapsed: 46 minutes
+	Number of neurons = 25 with 0.5999791482114428 mean F1-Score.
+	Time elapsed: 74 minutes
+	Number of neurons = 50 with 0.6719711037176501 mean F1-Score.
+	Time elapsed: 141 minutes
+	Number of neurons = 100 with 0.45552578051209036 mean F1-Score.
+	Time elapsed: 387 minutes
+	Number of neurons = 200 with 0.16218081403300896 mean F1-Score.
+	Time elapsed: 560 minutes
+	Number of neurons = 400 with 0.21280607891600978 mean F1-Score.
+	Time elapsed: 767 minutes
+Best neuron number: 50
+Time elapsed: 2121 minutes
