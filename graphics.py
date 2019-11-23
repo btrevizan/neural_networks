@@ -5,11 +5,11 @@ import pandas as pd
 import numpy as np
 
 params = {'alpha': 'Taxa de Aprendizado',
-              'batchsize': 'Tamanho do Batch (%)',
-              'beta': 'Parâmetro do Método do Momento (beta)',
-              'nlayers': 'Número de Camadas Ocultas',
-              'nneurons': 'Número de neurônios por camada',
-              'regularization': 'Parâmetro de Regularização (lambda)'}
+          'batchsize': 'Tamanho do Batch (porção)',
+          'beta': 'Parâmetro do Método do Momento (beta)',
+          'nlayers': 'Número de Camadas Ocultas',
+          'nneurons': 'Número de neurônios por camada',
+          'regularization': 'Parâmetro de Regularização (lambda)'}
 
 
 def plot_and_save(data, p, y):
@@ -45,7 +45,12 @@ if __name__ == "__main__":
             d_data = pd.read_csv(d_path, header=0)
 
             if p == 'batchsize':
-                d_data['param_value'] = (100 * d_data['param_value'] / d_data.iloc[-1, 0]).round(3)
+                d_data['param_value'] = (d_data['param_value'] / d_data.iloc[-1, 0]).round(3)
+
+            seconds = d_data['seconds_elapsed'].values
+            time_elapsed = (seconds - np.min(seconds)) / (np.max(seconds) - np.min(seconds))
+            time_column = pd.DataFrame({'Time (normalized)': time_elapsed})
+            d_data = pd.concat([time_column, d_data], axis=1)
 
             d_column = pd.DataFrame({'Dataset': [d] * d_data.shape[0]})
             d_data = pd.concat([d_column, d_data], axis=1)
@@ -55,10 +60,11 @@ if __name__ == "__main__":
             else:
                 data = pd.concat([data, d_data], ignore_index=True)
 
-        mean_score = pd.DataFrame(data.iloc[:, 3:].mean(axis=1), columns=['Mean F1-Score'])
-        std_score = pd.DataFrame(data.iloc[:, 3:].std(axis=1), columns=['Standard Deviation of F1-Score']).round(2)
+        mean_score = pd.DataFrame(data.iloc[:, 4:].mean(axis=1), columns=['Mean F1-Score'])
+        std_score = pd.DataFrame(data.iloc[:, 4:].std(axis=1), columns=['Standard Deviation of F1-Score']).round(2)
 
         data = pd.concat([data, mean_score, std_score], axis=1)
 
+        plot_and_save(data, p, 'Time (normalized)')
         plot_and_save(data, p, 'Mean F1-Score')
         plot_and_save(data, p, 'Standard Deviation of F1-Score')
