@@ -36,35 +36,68 @@ def plot_and_save(data, p, y):
 
 if __name__ == "__main__":
 
-    for p in params:
-        p_path = 'tests/results/{}/' + 'cv_{}.csv'.format(p)
+    # for p in params:
+    #     p_path = 'tests/results/{}/' + 'cv_{}.csv'.format(p)
+    #     data = None
+    #
+    #     for d in datasets:
+    #         d_path = p_path.format(d)
+    #         d_data = pd.read_csv(d_path, header=0)
+    #
+    #         if p == 'batchsize':
+    #             d_data['param_value'] = (d_data['param_value'] / d_data.iloc[-1, 0]).round(3)
+    #
+    #         seconds = d_data['seconds_elapsed'].values
+    #         time_elapsed = (seconds - np.min(seconds)) / (np.max(seconds) - np.min(seconds))
+    #         time_column = pd.DataFrame({'Time (normalized)': time_elapsed})
+    #         d_data = pd.concat([time_column, d_data], axis=1)
+    #
+    #         d_column = pd.DataFrame({'Dataset': [d] * d_data.shape[0]})
+    #         d_data = pd.concat([d_column, d_data], axis=1)
+    #
+    #         if data is None:
+    #             data = d_data
+    #         else:
+    #             data = pd.concat([data, d_data], ignore_index=True)
+    #
+    #     mean_score = pd.DataFrame(data.iloc[:, 4:].mean(axis=1), columns=['Mean F1-Score'])
+    #     std_score = pd.DataFrame(data.iloc[:, 4:].std(axis=1), columns=['Standard Deviation of F1-Score']).round(2)
+    #
+    #     data = pd.concat([data, mean_score, std_score], axis=1)
+    #
+    #     plot_and_save(data, p, 'Time (normalized)')
+    #     plot_and_save(data, p, 'Mean F1-Score')
+    #     plot_and_save(data, p, 'Standard Deviation of F1-Score')
+
+    for d in datasets:
+        costs_df = pd.read_csv('tests/results/{}/costs.csv'.format(d), header=0, index_col=None)
+        cols = costs_df.columns.values
+
         data = None
+        for i in range(1, 6):
+            costs = costs_df.iloc[:, [0, i]]
+            costs.columns = ['n_instance', 'Cost']
 
-        for d in datasets:
-            d_path = p_path.format(d)
-            d_data = pd.read_csv(d_path, header=0)
+            beta = pd.DataFrame({'Beta': [str(cols[i]).replace('.', ',')] * costs.shape[0]})
+            costs = pd.concat([costs, beta], axis=1)
 
-            if p == 'batchsize':
-                d_data['param_value'] = (d_data['param_value'] / d_data.iloc[-1, 0]).round(3)
+            data = pd.concat([data, costs])
 
-            seconds = d_data['seconds_elapsed'].values
-            time_elapsed = (seconds - np.min(seconds)) / (np.max(seconds) - np.min(seconds))
-            time_column = pd.DataFrame({'Time (normalized)': time_elapsed})
-            d_data = pd.concat([time_column, d_data], axis=1)
+        ax = sns.lineplot(x='n_instance',
+                          y='Cost',
+                          hue='Beta',
+                          style='Beta',
+                          markers=False,
+                          dashes=False,
+                          data=data)
 
-            d_column = pd.DataFrame({'Dataset': [d] * d_data.shape[0]})
-            d_data = pd.concat([d_column, d_data], axis=1)
+        ax.set_xlabel('Number of Instances Trained')
 
-            if data is None:
-                data = d_data
-            else:
-                data = pd.concat([data, d_data], ignore_index=True)
+        ax.tick_params(axis='x', which='major', labelsize=4)
+        ax.set_ylim(data['Cost'].min(), data['Cost'].max())
 
-        mean_score = pd.DataFrame(data.iloc[:, 4:].mean(axis=1), columns=['Mean F1-Score'])
-        std_score = pd.DataFrame(data.iloc[:, 4:].std(axis=1), columns=['Standard Deviation of F1-Score']).round(2)
+        # ax.set_xlim(2, costs_df.shape[0])
+        # ax.set_xticks([i for i in range(2, costs_df.shape[0] * 100, 200)])
 
-        data = pd.concat([data, mean_score, std_score], axis=1)
-
-        plot_and_save(data, p, 'Time (normalized)')
-        plot_and_save(data, p, 'Mean F1-Score')
-        plot_and_save(data, p, 'Standard Deviation of F1-Score')
+        plt.savefig('tests/graphics/{}_costs.pdf'.format(d), dpi=360, pad_inches=0.1, bbox_inches='tight')
+        plt.close()

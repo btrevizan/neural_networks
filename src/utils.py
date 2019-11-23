@@ -73,7 +73,7 @@ def cross_validate(model, x, y, k, batch_size, random_state):
         Test metric for each fold.
     """
     metrics = []
-    n_labels = len(np.unique(y))
+    n_labels = y.shape[1]
 
     for train_i, test_i in stratified_split(y, k, random_state):
         x_train = x[train_i, :]
@@ -116,44 +116,35 @@ def evaluate_cost(model, x, y, k, batch_size, random_state):
     :return: list
         Cost for each fold.
     """
-    costs = {}
-
+    costs = {'cost': [], 'n_instance': []}
     for train_i, test_i in stratified_split(y, k, random_state):
         x_train = x[train_i, :]
-        y_train = y[train_i]
+        y_train = y[train_i, :]
 
         x_test = x[test_i, :]
-        y_test = y[test_i]
+        y_test = y[test_i, :]
 
         n = x_train.shape[0]
         b = np.ceil(n / batch_size)
 
-        for _ in range(model.epoch):
+        for e in range(model.epoch):
             for i in range(int(b)):
                 j = i * batch_size
                 k = slice(j, j + batch_size)
-
                 model.backward_propagation(x_train[k, :], y_train[k])
 
-                bs = (j + batch_size) - j
-                cost = model.cost(x_test[k, :], y_test[k])
+                cost = model.cost(x_test, y_test)
+                costs['cost'].append(cost)
+                costs['n_instance'].append((e * n) + batch_size * (i + 1))
 
-                print("Cost = {}".format(cost))
-
-                costs.setdefault(bs, [])
-                costs[bs].append(cost)
-
-            bs = n - b * batch_size
-            if bs > 0:
+            if n - b * batch_size > 0:
                 model.backward_propagation(x_train[b * batch_size:, :], y_train[b * batch_size:])
-                cost = model.cost(x_test[b * batch_size:, :], y_test[b * batch_size:])
 
-                print("Cost = {}".format(cost))
+                cost = model.cost(x_test, y_test)
+                costs['cost'].append(cost)
+                costs['n_instance'].append(((e + 1) * n))
 
-                costs.setdefault(bs, [])
-                costs[bs].append(cost)
-
-    return costs
+        return costs
 
 
 def load_data(dataset):

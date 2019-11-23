@@ -29,38 +29,59 @@ def evaluate(args):
     results_dt_path = results_path.format(args.evaluate)
 
     x, y = load_data(args.evaluate)
-    rs = np.random.RandomState(22)
+    n_classes = y.shape[1]
 
-    with open(path.join(results_dt_path, 'best.csv'), 'w') as best:
-        lines = best.readlines()[1]
+    rs = np.random.RandomState(25)
 
-    bests = [float(b) for b in lines[:-1].split(',')]
+    with open(path.join(results_dt_path, 'best.csv'), 'r') as best:
+        content = best.read()
 
-    w = weights(int(bests[0]), rs)
-    r = bests[1]
-    a = bests[2]
-    bs = int(bests[3])
-    b = bests[5]
+    bests = {}
+    for line in content.split('\n'):
+        b = line.split(',')
+        if len(b) > 1:
+            bests[b[0]] = float(b[1])
 
-    model = NeuralNetwork(w, r, a, b)
+    bests['best_neuron'] = int(bests['best_neuron'])
+    bests['best_layer'] = int(bests['best_layer'])
 
-    # Number of folds to get 30% test set
-    k = np.ceil(x.shape[0] / (x.shape[0] * 0.3))
+    r = bests['best_r']
+    a = bests['best_alpha']
+    bs = int(bests['batch_size'] * x.shape[0])
+    b = bests['best_beta']
 
-    print("Evaluating costs for {}...".format(args.evaluate))
-    costs = evaluate_cost(model, x, y, k, bs, rs)
-    print("Done.")
+    # Number of folds to get 20% test set
+    k = int(np.ceil(x.shape[0] / (x.shape[0] * 0.2)))
 
-    costs_df = DataFrame(costs)
-    mean_costs = costs_df.mean(axis=1)
+    costs_df = None
+    for b in [0, 0.25, 0.5, 0.75, 0.99]:
+        w = [weights(bests['best_neuron'], x.shape[1] + 1, rs)]
+        w += [weights(bests['best_neuron'], bests['best_neuron'] + 1, rs) for _ in range(bests['best_layer'] - 1)]
+        w += [weights(n_classes, bests['best_neuron'] + 1, rs)]
 
-    batch_sizes = mean_costs.columns.value
-    mean_costs = mean_costs.values
+        model = NeuralNetwork(w, r, a, b)
 
-    with open(path.join(results_dt_path, 'costs.csv'), 'w') as file:
-        file.write("batch_size,mean_cost\n")
-        for bs, c in zip(batch_sizes, mean_costs):
-            file.write("{},{}\n".format(bs, c))
+        print("Evaluating costs for {} with beta {}...".format(args.evaluate, b))
+        costs = evaluate_cost(model, x, y, k, bs, rs)
+        print("Done.")
+
+        if costs_df is None:
+            costs_df = DataFrame({'n_instance': costs['n_instance'], str(b): costs['cost']})
+        else:
+            costs_df = concat([costs_df, DataFrame({str(b): costs['cost']})], axis=1)
+
+    costs_df.to_csv(path.join(results_dt_path, 'costs.csv'), index=False)
+
+    # model = NeuralNetwork(w, r, a, b)
+    #
+    # print("Evaluating performance for {}...".format(args.evaluate))
+    # scores = cross_validate(model, x, y, k, bs, rs)
+    #
+    # mean_score = float(np.mean(scores))
+    # std_score = float(np.std(scores))
+    #
+    # print("Score: {} +- {}".format(round(mean_score, 3), round(std_score, 3)))
+    # print("Done")
 
 
 def init(args):
@@ -130,9 +151,6 @@ def optimize_batchsizes(results_dt_path, x, y, rs, defaults):
     print("Best batch size: {}".format(best_bs))
     print("Time elapsed: {} minutes".format((stop - start) // 60))
 
-    with open(path.join(results_dt_path, 'best.csv'), 'a') as best:
-        best.write('batch_size,{}\n'.format(best_bs))
-
 
 def optimize_nlayers(results_dt_path, x, y, rs, defaults):
     n_layers = range(1, 21)
@@ -175,9 +193,6 @@ def optimize_nlayers(results_dt_path, x, y, rs, defaults):
 
     print("Best layer number: {}".format(best_layer))
     print("Time elapsed: {} minutes".format((stop - start) // 60))
-
-    with open(path.join(results_dt_path, 'best.csv'), 'a') as best:
-        best.write('best_layer,{}\n'.format(best_layer))
 
 
 def optimize_nneurons(results_dt_path, x, y, rs, defaults):
@@ -222,9 +237,6 @@ def optimize_nneurons(results_dt_path, x, y, rs, defaults):
     print("Best neuron number: {}".format(best_neuron))
     print("Time elapsed: {} minutes".format((stop - start) // 60))
 
-    with open(path.join(results_dt_path, 'best.csv'), 'a') as best:
-        best.write('best_neuron,{}\n'.format(best_neuron))
-
 
 def optimize_regularization(results_dt_path, x, y, rs, defaults):
     r_param = [0.01, 0.1, 0.5, 0.9, 0.99]
@@ -262,9 +274,6 @@ def optimize_regularization(results_dt_path, x, y, rs, defaults):
 
     print("Best regularization: {}".format(best_r))
     print("Time elapsed: {} minutes".format((stop - start) // 60))
-
-    with open(path.join(results_dt_path, 'best.csv'), 'a') as best:
-        best.write('best_r,{}\n'.format(best_r))
 
 
 def optimize_alpha(results_dt_path, x, y, rs, defaults):
@@ -304,9 +313,6 @@ def optimize_alpha(results_dt_path, x, y, rs, defaults):
     print("Best alpha: {}".format(best_alpha))
     print("Time elapsed: {} minutes".format((stop - start) // 60))
 
-    with open(path.join(results_dt_path, 'best.csv'), 'a') as best:
-        best.write('best_alpha,{}\n'.format(best_alpha))
-
 
 def optimize_beta(results_dt_path, x, y, rs, defaults):
     betas = [0, 0.25, 0.50, 0.75, 0.99]
@@ -343,9 +349,6 @@ def optimize_beta(results_dt_path, x, y, rs, defaults):
 
     print("Best beta: {}".format(best_beta))
     print("Time elapsed: {} minutes".format((stop - start) // 60))
-
-    with open(path.join(results_dt_path, 'best.csv'), 'a') as best:
-        best.write('best_beta,{}\n'.format(best_beta))
 
 
 def run(x, y, w, r, a, b, bs, rs):
