@@ -72,17 +72,6 @@ def evaluate(args):
 
     costs_df.to_csv(path.join(results_dt_path, 'costs.csv'), index=False)
 
-    # model = NeuralNetwork(w, r, a, b)
-    #
-    # print("Evaluating performance for {}...".format(args.evaluate))
-    # scores = cross_validate(model, x, y, k, bs, rs)
-    #
-    # mean_score = float(np.mean(scores))
-    # std_score = float(np.std(scores))
-    #
-    # print("Score: {} +- {}".format(round(mean_score, 3), round(std_score, 3)))
-    # print("Done")
-
 
 def init(args):
     results_dt_path = results_path.format(args.dataset)
@@ -196,7 +185,7 @@ def optimize_nlayers(results_dt_path, x, y, rs, defaults):
 
 
 def optimize_nneurons(results_dt_path, x, y, rs, defaults):
-    n_neurons = range(1, 100, 5)
+    n_neurons = list(range(1, 100, 5)) + [100, 200]
     n_classes = y.shape[1]
     neuron_metrics = {}
 
