@@ -23,3 +23,46 @@ Optimizing number of neurons on hidden layers...
 	Time elapsed: 767 minutes
 Best neuron number: 50
 Time elapsed: 2121 minutes
+Optimizing number of neurons on hidden layers...
+	Number of neurons = 1 with 0.7882552181477531 mean F1-Score.
+	Time elapsed: 30 minutes
+	Number of neurons = 6 with 0.7888570495438885 mean F1-Score.
+	Time elapsed: 39 minutes
+	Number of neurons = 11 with 0.8243214545177802 mean F1-Score.
+	Time elapsed: 37 minutes
+	Number of neurons = 16 with 0.8395916733532157 mean F1-Score.
+	Time elapsed: 34 minutes
+	Number of neurons = 21 with 0.8154464589676367 mean F1-Score.
+	Time elapsed: 27 minutes
+	Number of neurons = 26 with 0.8083596785610541 mean F1-Score.
+	Time elapsed: 30 minutes
+	Number of neurons = 31 with 0.8193413105480809 mean F1-Score.
+	Time elapsed: 33 minutes
+	Number of neurons = 36 with 0.8277491682213258 mean F1-Score.
+	Time elapsed: 37 minutes
+	Number of neurons = 41 with 0.8041586940553984 mean F1-Score.
+	Time elapsed: 41 minutes
+	Number of neurons = 46 with 0.8127700012871634 mean F1-Score.
+	Time elapsed: 45 minutes
+	Number of neurons = 51 with 0.8364107741606281 mean F1-Score.
+	Time elapsed: 49 minutes
+	Number of neurons = 56 with 0.8272755149386513 mean F1-Score.
+	Time elapsed: 52 minutes
+	Number of neurons = 61 with 0.7898055061563316 mean F1-Score.
+	Time elapsed: 58 minutes
+	Number of neurons = 66 with 0.8095682425545914 mean F1-Score.
+	Time elapsed: 54 minutes
+	Number of neurons = 71 with 0.8080381042304975 mean F1-Score.
+	Time elapsed: 57 minutes
+	Number of neurons = 76 with 0.834277355771303 mean F1-Score.
+	Time elapsed: 45 minutes
+	Number of neurons = 81 with 0.8387947316017549 mean F1-Score.
+	Time elapsed: 38 minutes
+	Number of neurons = 86 with 0.8026252462174861 mean F1-Score.
+	Time elapsed: 38 minutes
+	Number of neurons = 91 with 0.8198140053070855 mean F1-Score.
+	Time elapsed: 74 minutes
+	Number of neurons = 96 with 0.8135487223970568 mean F1-Score.
+	Time elapsed: 71 minutes
+Best neuron number: 16
+Time elapsed: 900 minutes

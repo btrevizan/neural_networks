@@ -3,3 +3,9 @@ best_beta,0.25
 batch_size,698
 best_alpha,0.5
 best_neuron,100
+batch_size,698
+best_r,0.1
+best_beta,0.5
+best_alpha,0.2
+best_layer,2
+best_neuron,91

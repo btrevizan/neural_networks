@@ -44,7 +44,7 @@ class Scorer:
         """
         return (self.tp(label) + self.tn(label)) / self.n
 
-    def recall(self, label=0):
+    def recall(self, label=1):
         """Calculate recall/sensitivity/TPR.
 
         :param label: int (optional)
@@ -60,7 +60,7 @@ class Scorer:
 
         return tp / (tp + fn)
 
-    def precision(self, label=0):
+    def precision(self, label=1):
         """Calculate precision.
 
         :param label: int (optional)

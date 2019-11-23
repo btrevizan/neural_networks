@@ -24,3 +24,46 @@ Optimizing number of neurons on hidden layers...
 Best neuron number: 200
 Time elapsed: 911 minutes
 Optimizing number of neurons on hidden layers...
+Optimizing number of neurons on hidden layers...
+	Number of neurons = 1 with 0.7092315538294727 mean F1-Score.
+	Time elapsed: 10 minutes
+	Number of neurons = 6 with 0.7077646237171851 mean F1-Score.
+	Time elapsed: 15 minutes
+	Number of neurons = 11 with 0.8705476484645978 mean F1-Score.
+	Time elapsed: 19 minutes
+	Number of neurons = 16 with 0.820730982140552 mean F1-Score.
+	Time elapsed: 19 minutes
+	Number of neurons = 21 with 0.9573976304346832 mean F1-Score.
+	Time elapsed: 11 minutes
+	Number of neurons = 26 with 0.8914387046294262 mean F1-Score.
+	Time elapsed: 10 minutes
+	Number of neurons = 31 with 0.9651830319741999 mean F1-Score.
+	Time elapsed: 11 minutes
+	Number of neurons = 36 with 0.9551794430265756 mean F1-Score.
+	Time elapsed: 12 minutes
+	Number of neurons = 41 with 0.9674231868504493 mean F1-Score.
+	Time elapsed: 14 minutes
+	Number of neurons = 46 with 0.9744309008413705 mean F1-Score.
+	Time elapsed: 15 minutes
+	Number of neurons = 51 with 0.8896194306322307 mean F1-Score.
+	Time elapsed: 17 minutes
+	Number of neurons = 56 with 0.8913648660058799 mean F1-Score.
+	Time elapsed: 18 minutes
+	Number of neurons = 61 with 0.8955886093253083 mean F1-Score.
+	Time elapsed: 20 minutes
+	Number of neurons = 66 with 0.8932296197679142 mean F1-Score.
+	Time elapsed: 21 minutes
+	Number of neurons = 71 with 0.949934847392158 mean F1-Score.
+	Time elapsed: 22 minutes
+	Number of neurons = 76 with 0.97995020253787 mean F1-Score.
+	Time elapsed: 24 minutes
+	Number of neurons = 81 with 0.9446744450657125 mean F1-Score.
+	Time elapsed: 25 minutes
+	Number of neurons = 86 with 0.8959550102594704 mean F1-Score.
+	Time elapsed: 25 minutes
+	Number of neurons = 91 with 0.8973909029793369 mean F1-Score.
+	Time elapsed: 21 minutes
+	Number of neurons = 96 with 0.9683246098839963 mean F1-Score.
+	Time elapsed: 91 minutes
+Best neuron number: 76
+Time elapsed: 431 minutes

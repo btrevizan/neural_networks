@@ -23,3 +23,46 @@ Optimizing number of neurons on hidden layers...
 	Time elapsed: 580 minutes
 Best neuron number: 15
 Time elapsed: 1183 minutes
+Optimizing number of neurons on hidden layers...
+	Number of neurons = 1 with 0.7794234161838929 mean F1-Score.
+	Time elapsed: 14 minutes
+	Number of neurons = 6 with 0.8826616263103005 mean F1-Score.
+	Time elapsed: 19 minutes
+	Number of neurons = 11 with 0.9082023074187073 mean F1-Score.
+	Time elapsed: 24 minutes
+	Number of neurons = 16 with 0.917299429941638 mean F1-Score.
+	Time elapsed: 16 minutes
+	Number of neurons = 21 with 0.909009832993007 mean F1-Score.
+	Time elapsed: 12 minutes
+	Number of neurons = 26 with 0.9264668368403866 mean F1-Score.
+	Time elapsed: 13 minutes
+	Number of neurons = 31 with 0.9214114537004796 mean F1-Score.
+	Time elapsed: 15 minutes
+	Number of neurons = 36 with 0.9237000524026338 mean F1-Score.
+	Time elapsed: 17 minutes
+	Number of neurons = 41 with 0.9250996411723417 mean F1-Score.
+	Time elapsed: 18 minutes
+	Number of neurons = 46 with 0.9211413955339671 mean F1-Score.
+	Time elapsed: 20 minutes
+	Number of neurons = 51 with 0.871857738797219 mean F1-Score.
+	Time elapsed: 22 minutes
+	Number of neurons = 56 with 0.9192727360277889 mean F1-Score.
+	Time elapsed: 24 minutes
+	Number of neurons = 61 with 0.8815649318229178 mean F1-Score.
+	Time elapsed: 26 minutes
+	Number of neurons = 66 with 0.8374215794313603 mean F1-Score.
+	Time elapsed: 28 minutes
+	Number of neurons = 71 with 0.9088355453610693 mean F1-Score.
+	Time elapsed: 29 minutes
+	Number of neurons = 76 with 0.9024152715642284 mean F1-Score.
+	Time elapsed: 27 minutes
+	Number of neurons = 81 with 0.9120953160979605 mean F1-Score.
+	Time elapsed: 59 minutes
+	Number of neurons = 86 with 0.9100086717626477 mean F1-Score.
+	Time elapsed: 50 minutes
+	Number of neurons = 91 with 0.896529174961471 mean F1-Score.
+	Time elapsed: 19 minutes
+	Number of neurons = 96 with 0.7656867969418318 mean F1-Score.
+	Time elapsed: 70 minutes
+Best neuron number: 26
+Time elapsed: 531 minutes
