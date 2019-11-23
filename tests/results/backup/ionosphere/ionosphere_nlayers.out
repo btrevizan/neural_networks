@@ -1,0 +1,43 @@
+Optimizing number of layers...
+	Number of layers = 1 with 0.9158817978421562 mean F1-Score.
+	Time elapsed: 9 minutes
+	Number of layers = 2 with 0.8817908814986744 mean F1-Score.
+	Time elapsed: 13 minutes
+	Number of layers = 3 with 0.7793753349690844 mean F1-Score.
+	Time elapsed: 19 minutes
+	Number of layers = 4 with 0.7797582536093166 mean F1-Score.
+	Time elapsed: 20 minutes
+	Number of layers = 5 with 0.7792435049488902 mean F1-Score.
+	Time elapsed: 13 minutes
+	Number of layers = 6 with 0.7783629505656582 mean F1-Score.
+	Time elapsed: 11 minutes
+	Number of layers = 7 with 0.7786446704058039 mean F1-Score.
+	Time elapsed: 12 minutes
+	Number of layers = 8 with 0.7789958733114546 mean F1-Score.
+	Time elapsed: 13 minutes
+	Number of layers = 9 with 0.7790763653745456 mean F1-Score.
+	Time elapsed: 15 minutes
+	Number of layers = 10 with 0.7769780673115977 mean F1-Score.
+	Time elapsed: 16 minutes
+	Number of layers = 11 with 0.7791319371478951 mean F1-Score.
+	Time elapsed: 18 minutes
+	Number of layers = 12 with 0.7794631192891722 mean F1-Score.
+	Time elapsed: 19 minutes
+	Number of layers = 13 with 0.7797546644782538 mean F1-Score.
+	Time elapsed: 21 minutes
+	Number of layers = 14 with 0.7796548901819202 mean F1-Score.
+	Time elapsed: 22 minutes
+	Number of layers = 15 with 0.7783144165283891 mean F1-Score.
+	Time elapsed: 24 minutes
+	Number of layers = 16 with 0.7787015457885583 mean F1-Score.
+	Time elapsed: 25 minutes
+	Number of layers = 17 with 0.7797753883406545 mean F1-Score.
+	Time elapsed: 27 minutes
+	Number of layers = 18 with 0.7783651367616082 mean F1-Score.
+	Time elapsed: 27 minutes
+	Number of layers = 19 with 0.7795364091446058 mean F1-Score.
+	Time elapsed: 55 minutes
+	Number of layers = 20 with 0.7790788437337002 mean F1-Score.
+	Time elapsed: 50 minutes
+Best layer number: 1
+Time elapsed: 439 minutes
