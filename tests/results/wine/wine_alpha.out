@@ -49,3 +49,20 @@ Optimizing the learning rate...
 	Time elapsed: 6 minutes
 Best alpha: 0.1
 Time elapsed: 69 minutes
+Optimizing the learning rate...
+	Alpha = 0.001 with 0.4010603599277466 mean F1-Score.
+	Time elapsed: 2 minutes
+	Alpha = 0.01 with 0.5855044584424944 mean F1-Score.
+	Time elapsed: 1 minutes
+	Alpha = 0.1 with 0.8755039090412394 mean F1-Score.
+	Time elapsed: 2 minutes
+	Alpha = 0.2 with 0.7936522267045631 mean F1-Score.
+	Time elapsed: 2 minutes
+	Alpha = 0.5 with 0.785504091066487 mean F1-Score.
+	Time elapsed: 2 minutes
+	Alpha = 0.9 with 0.40068999106573894 mean F1-Score.
+	Time elapsed: 1 minutes
+	Alpha = 0.99 with 0.37809744152929853 mean F1-Score.
+	Time elapsed: 1 minutes
+Best alpha: 0.1
+Time elapsed: 14 minutes
