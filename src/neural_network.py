@@ -45,16 +45,17 @@ class NeuralNetwork(Model):
 
     def fit(self, x, y, batch_size) -> None:
         n = x.shape[0]
-        b = np.ceil(n / batch_size)
+        b = int(1 / batch_size)
+        bs = int(n * batch_size)
 
         for _ in range(self.epoch):
-            for i in range(int(b)):
-                j = i * batch_size
-                k = slice(j, j + batch_size)
+            for i in range(b):
+                j = i * bs
+                k = slice(j, j + bs)
                 self.backward_propagation(x[k, :], y[k])
 
-            if n - b * batch_size > 0:
-                self.backward_propagation(x[b * batch_size:, :], y[b * batch_size:])
+            if n - b * bs > 0:
+                self.backward_propagation(x[b * bs:, :], y[b * bs:])
 
     def predict(self, x):
         predictions = []

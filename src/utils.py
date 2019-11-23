@@ -125,20 +125,21 @@ def evaluate_cost(model, x, y, k, batch_size, random_state):
         y_test = y[test_i, :]
 
         n = x_train.shape[0]
-        b = np.ceil(n / batch_size)
+        b = int(1 / batch_size)
+        bs = int(n * batch_size)
 
         for e in range(model.epoch):
-            for i in range(int(b)):
-                j = i * batch_size
-                k = slice(j, j + batch_size)
+            for i in range(b):
+                j = i * bs
+                k = slice(j, j + bs)
                 model.backward_propagation(x_train[k, :], y_train[k])
 
                 cost = model.cost(x_test, y_test)
                 costs['cost'].append(cost)
-                costs['n_instance'].append((e * n) + batch_size * (i + 1))
+                costs['n_instance'].append((e * n) + bs * (i + 1))
 
-            if n - b * batch_size > 0:
-                model.backward_propagation(x_train[b * batch_size:, :], y_train[b * batch_size:])
+            if n - b * bs > 0:
+                model.backward_propagation(x_train[b * bs:, :], y_train[b * bs:])
 
                 cost = model.cost(x_test, y_test)
                 costs['cost'].append(cost)
