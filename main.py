@@ -48,11 +48,11 @@ def evaluate(args):
     r = bests['best_r']
     a = bests['best_alpha']
     bs = int(bests['batch_size'] * x.shape[0])
-    b = bests['best_beta']
 
     # Number of folds to get 20% test set
     k = int(np.ceil(x.shape[0] / (x.shape[0] * 0.2)))
 
+    # Beta
     costs_df = None
     for b in [0, 0.25, 0.5, 0.75, 0.99]:
         w = [weights(bests['best_neuron'], x.shape[1] + 1, rs)]
@@ -70,7 +70,49 @@ def evaluate(args):
         else:
             costs_df = concat([costs_df, DataFrame({str(b): costs['cost']})], axis=1)
 
-    costs_df.to_csv(path.join(results_dt_path, 'costs.csv'), index=False)
+    costs_df.to_csv(path.join(results_dt_path, 'costs_beta.csv'), index=False)
+    b = bests['best_beta']
+
+    # Batch size
+    costs_df = None
+    for bs in [1/16, 1/8, 1/4, 1/2, 1]:
+        w = [weights(bests['best_neuron'], x.shape[1] + 1, rs)]
+        w += [weights(bests['best_neuron'], bests['best_neuron'] + 1, rs) for _ in range(bests['best_layer'] - 1)]
+        w += [weights(n_classes, bests['best_neuron'] + 1, rs)]
+
+        model = NeuralNetwork(w, r, a, b)
+
+        print("Evaluating costs for {} with batch size {}...".format(args.evaluate, bs))
+        costs = evaluate_cost(model, x, y, k, bs, rs)
+        print("Done.")
+
+        if costs_df is None:
+            costs_df = DataFrame({'n_instance': costs['n_instance'], str(bs): costs['cost']})
+        else:
+            costs_df = concat([costs_df, DataFrame({str(bs): costs['cost']})], axis=1)
+
+    costs_df.to_csv(path.join(results_dt_path, 'costs_batchsize.csv'), index=False)
+    bs = int(bests['batch_size'] * x.shape[0])
+
+    # Alpha
+    costs_df = None
+    for a in [0.001, 0.01, 0.1, 0.2, 0.5, 0.9, 0.99]:
+        w = [weights(bests['best_neuron'], x.shape[1] + 1, rs)]
+        w += [weights(bests['best_neuron'], bests['best_neuron'] + 1, rs) for _ in range(bests['best_layer'] - 1)]
+        w += [weights(n_classes, bests['best_neuron'] + 1, rs)]
+
+        model = NeuralNetwork(w, r, a, b)
+
+        print("Evaluating costs for {} with alpha {}...".format(args.evaluate, a))
+        costs = evaluate_cost(model, x, y, k, bs, rs)
+        print("Done.")
+
+        if costs_df is None:
+            costs_df = DataFrame({'n_instance': costs['n_instance'], str(a): costs['cost']})
+        else:
+            costs_df = concat([costs_df, DataFrame({str(a): costs['cost']})], axis=1)
+
+    costs_df.to_csv(path.join(results_dt_path, 'costs_alpha.csv'), index=False)
 
 
 def init(args):
@@ -97,13 +139,13 @@ def get_defaults(x, n_classes, rs):
     defaults['default_regularization'] = 0.5
     defaults['default_alpha'] = 0.1
     defaults['default_beta'] = 0.5
-    defaults['default_bs'] = x.shape[0] // 4
+    defaults['default_bs'] = 1 / 4
 
     return defaults
 
 
 def optimize_batchsizes(results_dt_path, x, y, rs, defaults):
-    batch_sizes = [x.shape[0] // 16, x.shape[0] // 8, x.shape[0] // 4, x.shape[0] // 2, x.shape[0]]
+    batch_sizes = [1 / 16, 1 / 8, 1 / 4, 1 / 2, 1]
     batch_metrics = {}
 
     result_file = path.join(results_dt_path, 'cv_batchsize.csv')
@@ -228,7 +270,7 @@ def optimize_nneurons(results_dt_path, x, y, rs, defaults):
 
 
 def optimize_regularization(results_dt_path, x, y, rs, defaults):
-    r_param = [0.01, 0.1, 0.5, 0.9, 0.99]
+    r_param = [0.01, 0.1, 1, 10, 100, 1000, 10000]
     r_metrics = {}
 
     result_file = path.join(results_dt_path, 'cv_regularization.csv')
