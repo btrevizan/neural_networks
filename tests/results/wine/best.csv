@@ -1,6 +1,6 @@
-batch_size,0.5
-best_r,0.1
-best_beta,0.99
-best_alpha,0.1
-best_neuron,46
-best_layer,1
+n_layers,1
+n_neurons,46
+batchsize,0.125
+r,0.01
+alpha,0.5
+beta,0.75

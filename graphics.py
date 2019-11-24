@@ -40,13 +40,20 @@ def plot_costs(param):
     for d in datasets:
         data = pd.read_csv('tests/results/{}/costs_{}.csv'.format(d, param.replace(' ', '').lower()), header=0, index_col=None)
 
-        ax = sns.lineplot(x='n_instance',
-                          y='cost',
-                          hue=param,
-                          style=param,
-                          markers=False,
-                          dashes=False,
-                          data=data)
+        if param == 'all':
+            ax = sns.lineplot(x='n_instance',
+                              y='cost',
+                              markers=False,
+                              dashes=False,
+                              data=data)
+        else:
+            ax = sns.lineplot(x='n_instance',
+                              y='cost',
+                              hue=param,
+                              style=param,
+                              markers=False,
+                              dashes=False,
+                              data=data)
 
         ax.set_ylabel('Custo')
         ax.set_xlabel('Número de instâncias apresentadas')
@@ -95,3 +102,4 @@ if __name__ == "__main__":
     plot_costs('Beta')
     plot_costs('Batch size')
     plot_costs('Alpha')
+    plot_costs('all')

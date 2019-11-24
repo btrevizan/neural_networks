@@ -33,86 +33,104 @@ def evaluate(args):
 
     rs = np.random.RandomState(25)
 
-    defaults = get_defaults(x, n_classes, rs)
+    # defaults = get_defaults(x, n_classes, rs)
 
-    # with open(path.join(results_dt_path, 'best.csv'), 'r') as best:
-    #     content = best.read()
-    #
-    # bests = {}
-    # for line in content.split('\n'):
-    #     b = line.split(',')
-    #     if len(b) > 1:
-    #         bests[b[0]] = float(b[1])
-    #
-    # bests['best_neuron'] = int(bests['best_neuron'])
-    # bests['best_layer'] = int(bests['best_layer'])
-    #
-    # r = bests['best_r']
-    # a = bests['best_alpha']
-    # bs = int(bests['batch_size'] * x.shape[0])
+    with open(path.join(results_dt_path, 'best.csv'), 'r') as best:
+        content = best.read()
 
-    r = defaults['default_regularization']
-    a = defaults['default_alpha']
-    bs = defaults['default_bs']
+    bests = {}
+    for line in content.split('\n'):
+        b = line.split(',')
+        if len(b) > 1:
+            bests[b[0]] = float(b[1])
 
-    # Number of folds to get 20% test set
+    bests['n_neurons'] = int(bests['n_neurons'])
+    bests['n_layers'] = int(bests['n_layers'])
+
+    r = bests['r']
+    a = bests['alpha']
+    b = bests['beta']
+    bs = int(bests['batchsize'] * x.shape[0])
+
+    w = [weights(bests['n_neurons'], x.shape[1] + 1, rs)]
+    w += [weights(bests['n_neurons'], bests['n_neurons'] + 1, rs) for _ in range(bests['n_layers'] - 1)]
+    w += [weights(n_classes, bests['n_neurons'] + 1, rs)]
+
+    # # Number of folds to get 20% test set
     k = int(np.ceil(x.shape[0] / (x.shape[0] * 0.2)))
 
-    # Beta
-    costs_df = None
-    for b in [0, 0.25, 0.5, 0.75, 0.99]:
-        w = [weights(defaults['default_n_neurons'], x.shape[1] + 1, rs)]
-        w += [weights(defaults['default_n_neurons'], defaults['default_n_neurons'] + 1, rs) for _ in range(defaults['default_n_layers'] - 1)]
-        w += [weights(n_classes, defaults['default_n_neurons'] + 1, rs)]
+    model = NeuralNetwork(w, r, a, b)
+    scores = cross_validate(model, x, y, k, bs, rs)
+    mean = np.mean(scores)
+    std = np.std(scores)
+    print("Mean F1-Score = {} +- {}".format(round(mean, 3), round(std, 3)))
 
-        model = NeuralNetwork(w, r, a, b)
+    # print("Evaluating costs for {}...".format(args.evaluate))
+    # costs = evaluate_cost(model, x, y, k, bs, rs)
+    # print("Done.")
+    #
+    # costs = DataFrame({'n_instance': costs['n_instance'], 'cost': costs['cost']})
+    # costs.to_csv(path.join(results_dt_path, 'costs_all.csv'), index=False)
 
-        print("Evaluating costs for {} with beta {}...".format(args.evaluate, b))
-        costs = evaluate_cost(model, x, y, k, bs, rs)
-        print("Done.")
-
-        costs = DataFrame({'n_instance': costs['n_instance'], 'cost': costs['cost'], 'Beta': [str(b).replace('.', ',')] * len(costs['cost'])})
-        costs_df = concat([costs_df, costs])
-
-    costs_df.to_csv(path.join(results_dt_path, 'costs_beta.csv'), index=False)
-    b = defaults['default_beta']
-
-    # Batch size
-    costs_df = None
-    for bs in [1/16, 1/8, 1/4, 1/2, 1]:
-        w = [weights(defaults['default_n_neurons'], x.shape[1] + 1, rs)]
-        w += [weights(defaults['default_n_neurons'], defaults['default_n_neurons'] + 1, rs) for _ in range(defaults['default_n_layers'] - 1)]
-        w += [weights(n_classes, defaults['default_n_neurons'] + 1, rs)]
-
-        model = NeuralNetwork(w, r, a, b)
-
-        print("Evaluating costs for {} with batch size {}...".format(args.evaluate, bs))
-        costs = evaluate_cost(model, x, y, k, bs, rs)
-        print("Done.")
-
-        costs = DataFrame({'n_instance': costs['n_instance'], 'cost': costs['cost'], 'Batch size': [str(bs).replace('.', ',')] * len(costs['cost'])})
-        costs_df = concat([costs_df, costs])
-
-    costs_df.to_csv(path.join(results_dt_path, 'costs_batchsize.csv'), index=False)
-    bs = defaults['default_bs']
-
-    # Alpha
-    costs_df = None
-    for a in [0.001, 0.01, 0.1, 0.2, 0.5, 0.9, 0.99]:
-        w = [weights(defaults['default_n_neurons'], x.shape[1] + 1, rs)]
-        w += [weights(defaults['default_n_neurons'], defaults['default_n_neurons'] + 1, rs) for _ in range(defaults['default_n_layers'] - 1)]
-        w += [weights(n_classes, defaults['default_n_neurons'] + 1, rs)]
-
-        model = NeuralNetwork(w, r, a, b)
-
-        print("Evaluating costs for {} with alpha {}...".format(args.evaluate, a))
-        costs = evaluate_cost(model, x, y, k, bs, rs)
-        print("Done.")
-
-        costs = DataFrame({'n_instance': costs['n_instance'], 'cost': costs['cost'], 'Alpha': [str(a).replace('.', ',')] * len(costs['cost'])})
-        costs_df = concat([costs_df, costs])
-
-    costs_df.to_csv(path.join(results_dt_path, 'costs_alpha.csv'), index=False)
+    # r = defaults['default_regularization']
+    # a = defaults['default_alpha']
+    # bs = defaults['default_bs']
+    #
+    # # Beta
+    # costs_df = None
+    # for b in [0, 0.25, 0.5, 0.75, 0.99]:
+    #     w = [weights(defaults['default_n_neurons'], x.shape[1] + 1, rs)]
+    #     w += [weights(defaults['default_n_neurons'], defaults['default_n_neurons'] + 1, rs) for _ in range(defaults['default_n_layers'] - 1)]
+    #     w += [weights(n_classes, defaults['default_n_neurons'] + 1, rs)]
+    #
+    #     model = NeuralNetwork(w, r, a, b)
+    #
+    #     print("Evaluating costs for {} with beta {}...".format(args.evaluate, b))
+    #     costs = evaluate_cost(model, x, y, k, bs, rs)
+    #     print("Done.")
+    #
+    #     costs = DataFrame({'n_instance': costs['n_instance'], 'cost': costs['cost'], 'Beta': [str(b).replace('.', ',')] * len(costs['cost'])})
+    #     costs_df = concat([costs_df, costs])
+    #
+    # costs_df.to_csv(path.join(results_dt_path, 'costs_beta.csv'), index=False)
+    # b = defaults['default_beta']
+    #
+    # # Batch size
+    # costs_df = None
+    # for bs in [1/16, 1/8, 1/4, 1/2, 1]:
+    #     w = [weights(defaults['default_n_neurons'], x.shape[1] + 1, rs)]
+    #     w += [weights(defaults['default_n_neurons'], defaults['default_n_neurons'] + 1, rs) for _ in range(defaults['default_n_layers'] - 1)]
+    #     w += [weights(n_classes, defaults['default_n_neurons'] + 1, rs)]
+    #
+    #     model = NeuralNetwork(w, r, a, b)
+    #
+    #     print("Evaluating costs for {} with batch size {}...".format(args.evaluate, bs))
+    #     costs = evaluate_cost(model, x, y, k, bs, rs)
+    #     print("Done.")
+    #
+    #     costs = DataFrame({'n_instance': costs['n_instance'], 'cost': costs['cost'], 'Batch size': [str(bs).replace('.', ',')] * len(costs['cost'])})
+    #     costs_df = concat([costs_df, costs])
+    #
+    # costs_df.to_csv(path.join(results_dt_path, 'costs_batchsize.csv'), index=False)
+    # bs = defaults['default_bs']
+    #
+    # # Alpha
+    # costs_df = None
+    # for a in [0.001, 0.01, 0.1, 0.2, 0.5, 0.9, 0.99]:
+    #     w = [weights(defaults['default_n_neurons'], x.shape[1] + 1, rs)]
+    #     w += [weights(defaults['default_n_neurons'], defaults['default_n_neurons'] + 1, rs) for _ in range(defaults['default_n_layers'] - 1)]
+    #     w += [weights(n_classes, defaults['default_n_neurons'] + 1, rs)]
+    #
+    #     model = NeuralNetwork(w, r, a, b)
+    #
+    #     print("Evaluating costs for {} with alpha {}...".format(args.evaluate, a))
+    #     costs = evaluate_cost(model, x, y, k, bs, rs)
+    #     print("Done.")
+    #
+    #     costs = DataFrame({'n_instance': costs['n_instance'], 'cost': costs['cost'], 'Alpha': [str(a).replace('.', ',')] * len(costs['cost'])})
+    #     costs_df = concat([costs_df, costs])
+    #
+    # costs_df.to_csv(path.join(results_dt_path, 'costs_alpha.csv'), index=False)
 
 
 def init(args):
