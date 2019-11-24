@@ -71,10 +71,8 @@ def evaluate(args):
         costs = evaluate_cost(model, x, y, k, bs, rs)
         print("Done.")
 
-        if costs_df is None:
-            costs_df = DataFrame({'n_instance': costs['n_instance'], str(b): costs['cost']})
-        else:
-            costs_df = concat([costs_df, DataFrame({str(b): costs['cost']})], axis=1)
+        costs = DataFrame({'n_instance': costs['n_instance'], 'cost': costs['cost'], 'Beta': [str(b).replace('.', ',')] * len(costs['cost'])})
+        costs_df = concat([costs_df, costs])
 
     costs_df.to_csv(path.join(results_dt_path, 'costs_beta.csv'), index=False)
     b = defaults['default_beta']
@@ -92,10 +90,8 @@ def evaluate(args):
         costs = evaluate_cost(model, x, y, k, bs, rs)
         print("Done.")
 
-        if costs_df is None:
-            costs_df = DataFrame({'n_instance': costs['n_instance'], str(bs): costs['cost']})
-        else:
-            costs_df = concat([costs_df, DataFrame({str(bs): costs['cost']})], axis=1)
+        costs = DataFrame({'n_instance': costs['n_instance'], 'cost': costs['cost'], 'Batch size': [str(bs).replace('.', ',')] * len(costs['cost'])})
+        costs_df = concat([costs_df, costs])
 
     costs_df.to_csv(path.join(results_dt_path, 'costs_batchsize.csv'), index=False)
     bs = defaults['default_bs']
@@ -113,10 +109,8 @@ def evaluate(args):
         costs = evaluate_cost(model, x, y, k, bs, rs)
         print("Done.")
 
-        if costs_df is None:
-            costs_df = DataFrame({'n_instance': costs['n_instance'], str(a): costs['cost']})
-        else:
-            costs_df = concat([costs_df, DataFrame({str(a): costs['cost']})], axis=1)
+        costs = DataFrame({'n_instance': costs['n_instance'], 'cost': costs['cost'], 'Alpha': [str(a).replace('.', ',')] * len(costs['cost'])})
+        costs_df = concat([costs_df, costs])
 
     costs_df.to_csv(path.join(results_dt_path, 'costs_alpha.csv'), index=False)
 
