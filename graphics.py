@@ -27,6 +27,8 @@ def plot_and_save(data, p, y, name):
 
     if p == 'batchsize':
         ax.set_xticks([1/16, 1/8, 1/4, 1/2, 1])
+    elif p == 'regularization':
+        ax.set_xticks([0.01, 1, 10])
     else:
         ax.set_xticks(np.unique(data['param_value'].values))
 
