@@ -67,3 +67,50 @@ Optimizing number of neurons on hidden layers...
 	Time elapsed: 91 minutes
 Best neuron number: 76
 Time elapsed: 431 minutes
+Optimizing number of neurons on hidden layers...
+	Number of neurons = 1 with 0.4021714664117756 mean F1-Score.
+	Time elapsed: 2 minutes
+	Number of neurons = 6 with 0.40106035996155825 mean F1-Score.
+	Time elapsed: 3 minutes
+	Number of neurons = 11 with 0.8066151570917439 mean F1-Score.
+	Time elapsed: 4 minutes
+	Number of neurons = 16 with 0.8366151090845395 mean F1-Score.
+	Time elapsed: 3 minutes
+	Number of neurons = 21 with 0.923651984694072 mean F1-Score.
+	Time elapsed: 4 minutes
+	Number of neurons = 26 with 0.9118001565894405 mean F1-Score.
+	Time elapsed: 4 minutes
+	Number of neurons = 31 with 0.9332815913216255 mean F1-Score.
+	Time elapsed: 5 minutes
+	Number of neurons = 36 with 0.9221705050892688 mean F1-Score.
+	Time elapsed: 6 minutes
+	Number of neurons = 41 with 0.9369852881568356 mean F1-Score.
+	Time elapsed: 6 minutes
+	Number of neurons = 46 with 0.9410593538318036 mean F1-Score.
+	Time elapsed: 7 minutes
+	Number of neurons = 51 with 0.9136520050072269 mean F1-Score.
+	Time elapsed: 7 minutes
+	Number of neurons = 56 with 0.9043927629188391 mean F1-Score.
+	Time elapsed: 8 minutes
+	Number of neurons = 61 with 0.9218001362762858 mean F1-Score.
+	Time elapsed: 9 minutes
+	Number of neurons = 66 with 0.9055038693320444 mean F1-Score.
+	Time elapsed: 16 minutes
+	Number of neurons = 71 with 0.9247630911511949 mean F1-Score.
+	Time elapsed: 19 minutes
+	Number of neurons = 76 with 0.9377260258384231 mean F1-Score.
+	Time elapsed: 20 minutes
+	Number of neurons = 81 with 0.9129112587300325 mean F1-Score.
+	Time elapsed: 22 minutes
+	Number of neurons = 86 with 0.9147631158797125 mean F1-Score.
+	Time elapsed: 23 minutes
+	Number of neurons = 91 with 0.9103186815927161 mean F1-Score.
+	Time elapsed: 20 minutes
+	Number of neurons = 96 with 0.927355677231871 mean F1-Score.
+	Time elapsed: 54 minutes
+	Number of neurons = 100 with 0.9184668082536961 mean F1-Score.
+	Time elapsed: 54 minutes
+	Number of neurons = 200 with 0.876985405452688 mean F1-Score.
+	Time elapsed: 105 minutes
+Best neuron number: 46
+Time elapsed: 410 minutes

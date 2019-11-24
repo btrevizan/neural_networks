@@ -66,3 +66,10 @@ Optimizing number of neurons on hidden layers...
 	Time elapsed: 71 minutes
 Best neuron number: 16
 Time elapsed: 900 minutes
+Optimizing number of neurons on hidden layers...
+	Number of neurons = 100 with 0.5638005079070546 mean F1-Score.
+	Time elapsed: 91 minutes
+	Number of neurons = 200 with 0.26006974417972495 mean F1-Score.
+	Time elapsed: 261 minutes
+Best neuron number: 100
+Time elapsed: 352 minutes
