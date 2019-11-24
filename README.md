@@ -17,3 +17,9 @@ optional arguments:
   -d {breast-cancer,ionosphere,pima,wine}, --dataset {breast-cancer,ionosphere,pima,wine}
                         Dataset for parameter optimization.
 ``` 
+
+## Numerical checks
+To run checks with numerical gradients, just type:
+```bash
+$ python3 checks.py tests/checks/ex1/network.txt tests/checks/ex1/initial_weights.txt tests/checks/ex1/dataset.txt
+```
