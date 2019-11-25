@@ -1,6 +1,6 @@
 n_layers,1
 n_neurons,21
-batchsize,0.125
-r,0.1
-alpha,0.2
+batchsize,0.0625
+r,0.01
+alpha,0.99
 beta,0.75
