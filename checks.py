@@ -18,6 +18,7 @@ def main(args):
 	initial_weights = load_weights(initial_weights_path)
 	x, y = load_benchmark(dataset_path)
 	epsilon = 0.0000010000
+	n = x.shape[0]
 
 	model = NeuralNetwork(deepcopy(initial_weights), r, 0.99, 0)
 
@@ -60,7 +61,7 @@ def main(args):
 	print("\n--------------------------------------------")
 	print("Rodando backpropagation")
 
-	for i in range(x.shape[0]):
+	for i in range(n):
 		print("\tCalculando gradientes com base no exemplo {}".format(i + 1))
 
 		model.g = [np.zeros(model.w[i].shape) for i in range(model.n_layers)]
@@ -80,8 +81,7 @@ def main(args):
 
 	print("\tDataset completo processado. Calculando gradientes regularizados")
 
-	model = NeuralNetwork(deepcopy(initial_weights), r, 0.99, 0)
-	model.fit(x, y, x.shape[0])
+	model.final_gradients(n)
 
 	for t in range(model.n_layers):
 		print("\t\tGradientes finais para Theta{} (com regularizacao):\n{}".format(t + 1, str_matrix(model.g[t], '\t\t\t')))
@@ -89,9 +89,7 @@ def main(args):
 	print("\n--------------------------------------------")
 	print("Rodando verificacao numerica de gradientes (epsilon={})".format(epsilon))
 
-	trained_gradients = deepcopy(model.g)
-
-	model = NeuralNetwork(deepcopy(initial_weights), r, 0.99, 0)
+	backprop_gradients = deepcopy(model.g)
 	model.g = [np.zeros(model.w[i].shape) for i in range(model.n_layers)]
 
 	for t in range(model.n_layers):
@@ -114,7 +112,7 @@ def main(args):
 	print("\n--------------------------------------------")
 	print("Verificando corretude dos gradientes com base nos gradientes numericos:")
 	for t in range(model.n_layers):
-		errors = np.sum(np.abs(model.g[t] - trained_gradients[t]))
+		errors = np.sum(np.abs(model.g[t] - backprop_gradients[t]))
 		print("\tErro entre gradiente via backprop e gradiente numerico para Theta{}: {}".format(t + 1, errors))
 
 

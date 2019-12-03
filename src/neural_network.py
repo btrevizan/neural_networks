@@ -197,6 +197,5 @@ class NeuralNetwork(Model):
             p = np.multiply(self.w[k], self.r)  # regularization
             p[:, 0] = 0  # ignore bias
 
-            self.g[k] = self.g[k] + p
-            self.g[k] = np.multiply(self.g[k], 1 / n)
+            self.g[k] = np.multiply(self.g[k] + p, 1 / n)  # average gradient
             self.m[k] = np.multiply(self.beta, self.m[k]) + self.g[k]  # momentum
